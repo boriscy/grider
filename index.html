@@ -44,14 +44,18 @@ td{padding: 2px;}
                 <td>
                     <input name="cantidad" type="text" class="num" />
                 </td>
+                <td class="num">
+                </td>
             </tr>
         </table>
         <button id="boton1">Grider Tabla 1</button>
     </div>
 <script>
 $(document).ready(function(){
+    $('#table1').grider();
+    
     $('#boton1').click(function(){
-        $('#table1').grider();
+        $('#table1').grider({countRow: true, countRowAdd: true});
     });
 });
 </script>

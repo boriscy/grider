@@ -58,7 +58,7 @@
   * @param boolean config['countRowAdd'] Indica si es que se va adicionar una columna
   */
     $.Grider = function(table, config) {
-
+        
         /**
          * Valores por defecto
          */
@@ -89,26 +89,39 @@
 
         /**
         * Prepara todos los datos a ser usados en la tabla
-        * @param DOM t Tabla que se recive
+        * @param DOM t Table
         */
         function setGrider(t) {
             $(table).find('tr:first').addClass('noedit');
+            // Permite contar las filas
+            if(config['countRow']) {
+                if(config['countRowAdd']) {
+                    $(table).find('tr.noedit:first').prepend('<th>Nº</th>');
+                    $(table).find('tr:not(.noedit)').each(function(index, elem){
+                        var ind = index+1;
+                        $(elem).prepend('<td>'+ind+'</td>');
+                    });
+                }
+            }
+            
             for(var i = 0, l = t.rows[0].cells.length; i < l; i++) {
                 setColumn(t.rows[0].cells[i], i);
             }
+            // Tipos de columna
+            setColType();
             // Necesario para poder realizar las formulas
             for(var i = 0, l = t.rows[0].cells.length; i < l; i++) {
                 setFormula(t.rows[0].cells[i]);
                 setSummary(t.rows[0].cells[i]);
             }
-            setColType();
             // Calcular formulas la primera ves
             if(formulaSet && config.initCalc) {
                 var rows = $(table).find('tr:not(.noedit)');
                 rows.each(function(index, elem) {
+                    var pos = index + 1;
                     for(var k in cols) {
                         if(cols[k].formula) {
-                            calculateFormula(cols[k].formula, elem, k);
+                            calculateFormula(cols[k].name, pos);
                         }
                     }
                 });
@@ -117,7 +130,8 @@
                 if(cols[k].summary)
                     calculateSummary(cols[k]);
             };
-            // Permitir adiconado de filas
+            
+            // Permitir adicionado de filas
             if(config['addRow']) {
                 $(table).append(config['addRowText']);
                 $(table).find("caption a").click(function() {
@@ -135,32 +149,30 @@
                 });
             }
 
-            // Permite contar las filas
-            if(config['countRow']) {
-                if(config['countRowAdd']) {
-                    $(table).find('tr.noedit:first').prepend('<th>Nº</th>');
-                    $(table).find('tr:not(.noedit)').each(function(index, elem){
-                        var ind = index+1;
-                        $(elem).prepend('<td>'+ind+'</td>');
-                    });
-                }
-            }
+            // Adiciona eventos a los elementos input[type="text"] que esten relacionados a una formula
+            setEvents();
+            console.log(cols);///////
         }
 
         /**
         * Determina el tipo de elemento que contiene cada elemento para poder seleccionar
         */
         function setColType() {
-            var row = $('#grid tr:not(.noedit):first')[0]; // Encuentra la primera fila que no tenga clase .noedit en su tr (fila)
+            var row = $(table).find('tr:not(.noedit):first')[0]; // Encuentra la primera fila que no tenga clase .noedit en su tr (fila)
+            
             for(var k in cols) {
                 var cell = $(row).find('td:eq(' + cols[k].pos + ')')[0];
-
-                if(cell.firstChild && cell.firstChild.nodeType == 1) {
-
-                    var type = cell.firstChild.nodeName.toLowerCase();
+                
+                var node = $(cell).find('select')[0] || $(cell).find('input:not([type="submit"])')[0] || $(cell).find('select')[0];
+                try {
+                     type = node.nodeName.toLowerCase();
+                }catch(e){ type = false }
+                
+                if(type) {
+                    
                     switch(type) {
                         case 'input':
-                            cols[k]['type'] = 'input[type="'+ cell.firstChild.type +'"]';
+                            cols[k]['type'] = 'input[type="'+ node.type +'"]';
                             break;
                         case 'select':
                             cols[k]['type'] = 'select';
@@ -219,22 +231,22 @@
 
         /**
         * Permite calcular los summary que son resumenes de total al final de la fila
-        * @param object col
+        * @param String col
         */
         function calculateSummary(col) {
-            //console.log("Calc Sum %o", col);//
-            var summary = col.summary;
-            var cells = $(table).find('tr:not(.noedit) td:eq(' + col.pos + ')');
+            
+            var summary = cols[col].summary;
+            var cells = $(table).find('tr:not(.noedit) td:eq(' + cols[col].pos + ')');
             var res = 0, sum = 0, max = null, min = null;
 
             if(summary != 'count') {
                 var val = 0;
 
                 cells.each(function(index, elem) {
-                    if(col.type == "") {
+                    if(cols[col].type == "") {
                         val = $(elem).html() * 1;
                     }else{
-                        val = $(elem).find(col.type).val() * 1;
+                        val = $(elem).find(cols[col].type).val() * 1;
                     }
 
                     switch(summary) {
@@ -270,7 +282,7 @@
             }else{
                 res = cells.length;
             }
-            $(table).find('tr.summary td:eq(' + col.pos +')').html(res);
+            $(table).find('tr.summary td:eq(' + cols[col].pos +')').html(res);
         }
 
 
@@ -279,27 +291,28 @@
          * @param Event e Evento que se generó
          */
         function fireCellEvent(e) {
+            
             var target = e.target || e.srcElement;
             if(target.nodeType == 1) {
-                calculate(e);
-                target = $(target).parent('td')[0];
-                var col = findColBy(target.cellIndex, 'pos');
-
+                var pos = $(target).parents('tr')[0].rowIndex;
+                
+                var col = findColBy(pos, 'pos');
+                
                 for(var k in cols) {
-                    try{
-                        var reg = '\\b'+ col.name +'\\b';
-                        reg = new RegExp(reg);
-                        if(reg.test(cols[k].formula) && cols[k].summary) {
-                            calculateSummary(cols[k]);
-                        }
-                        if(col.summary)
-                            calculateSummary(cols[k]);
-                    }catch(e){}
+                    if(cols[k].formula) {
+                        try{
+                            var reg = '\\b'+ col.name +'\\b';
+                            reg = new RegExp(reg);
+                            if(reg.test(cols[k].formula)) {
+                                calculateFormula(k, pos);
+                            }
+                        }catch(e){}
+                    }
                 }
 
-            }else{
+            }/*else{
                 col = jQuery(target).parents('td').eq(0)[0].cellIndex;
-            }
+            }*/
         }
 
         /**
@@ -318,9 +331,11 @@
                 for(var k in cols) {
                     reg = "\\b" + k + "\\b";
                     var reg = new RegExp(reg);
-          
-                    if( reg.test(formula))
-                        setEvent(k);
+                    // Definir que elementos tienen evento
+                    if( reg.test(formula)) {
+                        if(cols[k].type == 'input[type="text"]')
+                            cols[k]["event"] = true;
+                    }
                 }
             }
         }
@@ -329,69 +344,45 @@
         * Prepara los evento que son adicionados a los elementos dentro del grid
         * @param string col Nombre de la columna
         */
-        function setEvent(col) {
-            if(!cols[col].event) {
-                var type = 'input[type="text"]';
-                if(config.col && config.col.type) {
-                    type = config.col.type;
-                }
-                
-                var exp = 'tr td:eq(' + cols[col]['pos'] + ') ' + type;
-                //$(table).find(exp).change( function(e){ debug('cambio')});///
-                $(table).find(exp).live("change", function(e) {
-                    debug(exp+' '+$(table).find(exp).length);//////
-                    fireCellEvent(e);
-                    cols[col].event = true;
-                });
-            }
-        }
-
-        /**
-        * Calcula la formula o formulas que se puedan haber generado en el evento enviado
-        * @param Event e Evento que inicio el calculo
-        */
-        function calculate(e) {
-
-            var target = e.target || e.srcElement;
-            var row = $(target).parents('tr').eq(0);
-            var col = $(target).parents('td').eq(0)[0].cellIndex;
-            var i = 0;
-            col = findColBy(col, 'pos').name;
-      
-            for(var k in cols) {
-                reg = "\\b" + col  + "\\b";
-                var reg = new RegExp(reg);
-                if(cols[k].formula && reg.test(cols[k].formula)) {
-                    calculateFormula(cols[k].formula, row, k);
+        function setEvents() {
+            for(k in cols) {
+                if(cols[k].event) {
+                    var pos = parseInt(cols[k]['pos']) + 1;
+                    var exp = 'tr td:nth-child(' + pos + ') ' + cols[k].type;
+                    // Maldito Internet Explorer, no es posible usar "live"
+                    $(table).find(exp).unbind("change");
+                    $(table).find(exp).change( function(e) {
+                        fireCellEvent(e);
+                    });
                 }
             }
         }
 
         /**
          * Calcula la formula que se la hay enviado en la fila
-         * @param String formula Formula a ser evaluada
-         * @param DOM row Fila den la cual se ejecuta la formula
-         * @param string col Nombre de la columna a calcular
+         * @param String col Columna
+         * @param DOM row Fila de la cual se ejecuta la formula
          */
-        function calculateFormula(formula, row, col) {
-
-            var pat = formula.match(/\b[a-z_]+\b/g);
-            var formu = formula;
-
+        function calculateFormula(col, pos) {
+            //console.log("%s, %s",col, pos);
+            var pat = cols[col].formula.match(/\b[a-z_-]+[0-9]*\b/ig);
+            var formu = cols[col].formula;
+            var row = $(table).find('tr:eq('+ pos + ')');
+            
             // Solución para IE
             for(var k in pat) {
                 if(!/^\d+$/.test(k)) {
                     delete(pat[k]);
                 }
             }
-      
+            
             for(var k in pat) {
                 var exp = 'td:eq(' + cols[pat[k]].pos + ') ' + cols[pat[k]].type;
                 var val = parseFloat( $(row).find(exp).val() ) || 0;
                 var reg = new RegExp('\\b' + pat[k] + '\\b')
                 formu = formu.replace(reg, val);
             }
-
+            
             var res = eval(formu);
             // Posicionando la respuesta correspondiente
             var cell = $(row).find('td:eq(' + cols[col].pos + ')');
@@ -400,6 +391,7 @@
             }else{
                 $(cell).find(type).html(res);
             }
+            calculateSummary(col);
         }
 
         /**
@@ -424,8 +416,6 @@
             $(tr).find("td").each(function(index, elem) {
                 if($(elem).find("input, select, textarea").length > 0) {
                     $(elem).find("input, select, textarea").val('');
-                }else{
-                    $(elem).html('&nbsp;');
                 }
             });
             if(config['countRow']) {
@@ -433,15 +423,33 @@
                 $(tr).find('td:eq('+ config['countRowRow'] +')').html(fila);
             }
             $(table).find('tr:not(.noedit):last').after(tr);
+            // Regitrar elementos que causan que se ejecute el calculo (Adición de eventos)
+            setEvents();
+        }
+
+        /**
+         * Define las columnas que deben tener evento, buscando todos los elementos comunes en las formulas
+         */
+        function setColsWithEvent() {
+            for(var k in cols) {
+                if(cols[k].formula) {
+                    
+                    if(cols[k].type == 'input[type="text"]') {
+                        cols[k].withEvent = true;
+                    }
+                }
+            }
         }
 
         /**
          * Permite borrar una fila
          */
         function delRow(elem) {
-            $(elem).parents('tr').remove();
-            if(config['countRow']) {
-                rowNumber();
+            if($(table).find('tr:not(.noedit)').length > 1 ) {
+                $(elem).parents('tr').eq(0).remove();
+                if(config['countRow']) {
+                    rowNumber();
+                }
             }
         }
 
@@ -463,7 +471,6 @@
             calculateFormula: calculateFormula,
             setGrider: setGrider,
             setColumn: setColumn,
-            calculate: calculate,
             fireCellEvent: fireCellEvent,
             setColType: setColType,
             findColBy: findColBy,
@@ -478,3 +485,4 @@
     }
 
 })(jQuery);
+
