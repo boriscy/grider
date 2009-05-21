@@ -16,7 +16,9 @@ td{padding: 2px;}
 </head>
 <body>
     <div>
-        <h2>Tabla 1</h2>
+        <h2>Ejemplo 1</h2>
+        <form method="post" action="post.php" >
+
         <table border="1" id="table1" >
             <tr>
                 <th col="producto">Producto</th>
@@ -27,7 +29,7 @@ td{padding: 2px;}
             </tr>
             <tr>
                 <td>
-                    <select name="det[item][0]" >
+                    <select name="det[0][item]" >
                         <option value="1">Computadora</option>
                         <option value="2">Iphone</option>
                         <option value="3">Mouse</option>
@@ -41,20 +43,20 @@ td{padding: 2px;}
                     </select>
                 </td>
                 <td>
-                    <input name="det[precio][0]" type="text" class="num" value="10" />
+                    <input name="det[0][precio]" type="text" class="num" value="10" />
                 </td>
                 <td>
-                    <input name="det[cantidad][0]" type="text" class="num" value="1" />
+                    <input name="det[0][cantidad]" type="text" class="num" value="1" />
                 </td>
                 <td>
-                    <input name="det[descuento][0]" type="checkbox" />
+                    <input name="det[0][descuento]" type="checkbox" />
                 </td>
                 <td class="num">
                 </td>
             </tr>
             <tr>
                 <td>
-                    <select name="det[item][1]" >
+                    <select name="det[1][item]" >
                         <option value="1">Computadora</option>
                         <option value="2">Iphone</option>
                         <option value="3">Mouse</option>
@@ -68,20 +70,20 @@ td{padding: 2px;}
                     </select>
                 </td>
                 <td>
-                    <input name="det[precio][1]" type="text" class="num" value="2.33" />
+                    <input name="det[1][precio]" type="text" class="num" value="2.33" />
                 </td>
                 <td>
-                    <input name="det[cantidad][1]" type="text" class="num" value="3" />
+                    <input name="det[1][cantidad]" type="text" class="num" value="3" />
                 </td>
                 <td>
-                    <input name="det[descuento][1]" type="checkbox" />
+                    <input name="det[1][descuento]" type="checkbox" />
                 </td>
                 <td class="num">
                 </td>
             </tr>
             <tr>
                 <td>
-                    <select name="det[item][2]" >
+                    <select name="det[2][item]" >
                         <option value="1">Computadora</option>
                         <option value="2">Iphone</option>
                         <option value="3">Mouse</option>
@@ -95,19 +97,23 @@ td{padding: 2px;}
                     </select>
                 </td>
                 <td>
-                    <input name="det[precio][2]" type="text" class="num" value="5.5" />
+                    <input name="det[2][precio]" type="text" class="num" value="5.5" />
                 </td>
                 <td>
-                    <input name="det[cantidad][2]" type="text" class="num" value="2" />
+                    <input name="det[2][cantidad]" type="text" class="num" value="2" />
                 </td>
                 <td>
-                    <input name="det[descuento][2]" type="checkbox" />
+                    <input name="det[2][descuento]" type="checkbox" />
                 </td>
                 <td class="num">
                 </td>
             </tr>
 
-        </table><br/>
+        </table>
+        
+        <input type="submit" value="Guardar" id="submit1"/
+        </form>
+        <br/>
         <button id="boton1">Grider Tabla 1</button>
         <h4>Código para esta tabla</h4>
         <div>
@@ -127,7 +133,7 @@ td{padding: 2px;}
     </div>
 <script>
 $(document).ready(function(){
-        
+    //$('#submit1').hide();
     $('#boton1').click(function(){
         $('#table1').grider({countRow: true, countRowAdd: true});
         $(this).hide();

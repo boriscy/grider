@@ -72,7 +72,8 @@
             delRowText: '<td><a href="#" class="delete">borrar</a></td>',
             countRow: false,
             countRowRow: 0,
-            countRowAdd: false
+            countRowAdd: false,
+            addedRow: false
         };
         if(config) {
             for(var k in defaults) {
@@ -361,7 +362,6 @@
         */
         function setEvents() {
             for(k in cols) {
-                //console.log("%o , %o", k ,cols[k].event);
                 if(cols[k].event) {
                     var pos = parseInt(cols[k]['pos']) + 1;
                     var exp = 'tr td:nth-child(' + pos + ') ' + cols[k].type;
@@ -440,14 +440,36 @@
          */
         function addRow() {
             var tr = $(table).find('tr:not(.noedit):first').clone();
-            for(col in cols) {
-                if($(tr).find("input, select, textarea").length > 0) {
-                    $(tr).find("input[type=text], input[type=hidden], textarea, select").val('');
-                    $(tr).find("input[type=radio], input[type=checkbox]").attr('checked', false);
+            if(!config.addedRow) {
+                var control = $(table).find('tr:not(.noedit):last').find('input, select, textarea')[0] || false;
+                // Determinar el número de fila del los controles
+                if(control.name) {
+                    config["formPos"] = parseInt( control.name.replace(/^.*\[([0-9]+)\].*$/ig, "$1") ) || '';
                 }
-                if(cols[k].type == "" && cols[k].formula)
-                    $(tr).find("td:eq(" + cols[k].pos + ")").html('');
-            };
+                config.addedRow = true
+            }
+            if(config.formPos !== '')
+                config.formPos++;
+
+            if($(tr).find("input, select, textarea").length > 0) {
+                $(tr).find("input, textarea, select").each(function(index, elem) {
+                    var newName = '';
+                    if(config.formPos !== '') {
+                        newName = elem.name.replace(/\[[0-9]+\]/i, '[' + config.formPos + ']');
+                    }else {
+                        newName = elem.name;
+                    }
+                    if(elem.type == 'checkbox' || elem.type == 'radio') {
+                         $(elem).attr({'name': newName, 'checked': false})
+                    }else {
+                         $(elem).attr({'name': newName, 'value': ''});
+                    }
+                    $(elem)
+                });
+                $(tr).find("input[type=radio], input[type=checkbox]").attr('checked', false);
+            }
+            if(cols[k].type == "" && cols[k].formula)
+                $(tr).find("td:eq(" + cols[k].pos + ")").html('');
             if(config['countRow']) {
                 var fila = parseInt($(table).find('tr:not(.noedit):last td:eq('+ config['countRowRow'] +')').html()) + 1;
                 $(tr).find('td:eq('+ config['countRowRow'] +')').html(fila);
