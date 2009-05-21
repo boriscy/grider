@@ -22,8 +22,8 @@ td{padding: 2px;}
         <table border="1" id="table1" >
             <tr>
                 <th col="producto">Producto</th>
-                <th col="precio">Precio</th>
-                <th col="cantidad">Cantidad</th>
+                <th col="precio" summary="max">Precio</th>
+                <th col="cantidad" summary="avg">Cantidad</th>
                 <th col="descuento">Descuento</th>
                 <th col="subtotal" formula="precio*cantidad*(1 - 0.10 * descuento)" summary="sum">Subtotal</th>
             </tr>
@@ -111,20 +111,20 @@ td{padding: 2px;}
 
         </table>
         
-        <input type="submit" value="Guardar" id="submit1"/
+        <input type="submit" value="Ingresar datos" id="submit1" disabled="true"/>
         </form>
         <br/>
-        <button id="boton1">Grider Tabla 1</button>
+        <a id="boton1" href="#">Convertir Tabla 1</a>
         <h4>Código para esta tabla</h4>
         <div>
         # HTML en la primera Fila
         &lt;tr&gt;<br>
                 &lt;th col="producto"&gt;Producto&lt;/th&gt;<br>
-                &lt;th col="precio"&gt;Precio&lt;/th&gt;<br>
+                &lt;th col="precio" summary="max"&gt;Precio&lt;/th&gt;<br>
                 &lt;th col="cantidad"&gt;Cantidad&lt;/th&gt;<br>
 
                 &lt;th col="descuento"&gt;Descuento&lt;/th&gt;<br>
-                &lt;th col="subtotal" formula=\"precio*cantidad\" summary=\"sum\"&gt;Subtotal&lt;/th&gt;<br>
+                &lt;th col="subtotal" formula="precio*cantidad*(1 - 0.10 * descuento)" summary="sum"&gt;Subtotal&lt;/th&gt;<br>
             &lt;/tr&gt;<br>
         
         # JavaScript<br/>
@@ -137,6 +137,7 @@ $(document).ready(function(){
     $('#boton1').click(function(){
         $('#table1').grider({countRow: true, countRowAdd: true});
         $(this).hide();
+        $('#submit1').attr('disabled', false)
     });
 });
 </script>

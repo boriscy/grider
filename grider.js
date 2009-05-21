@@ -396,6 +396,7 @@
                     delete(pat[k]);
                 }
             }
+            var columns = []
             // Se prepara la formula para ser calculada
             for(var k in pat) {
                 var exp = 'td:eq(' + cols[pat[k]].pos + ') ' + cols[pat[k]].type;
@@ -407,6 +408,7 @@
                 }
                 var reg = new RegExp('\\b' + pat[k] + '\\b')
                 formu = formu.replace(reg, val);
+                columns.push(pat[k]);
             }
             
             var res = eval(formu);
@@ -417,6 +419,11 @@
                 $(cell).html(res);
             }else{
                 $(cell).find(type).html(res);
+            }
+            for(var i=0, l=columns.length ; i< l; i++) {
+                //console.log(cols[columns[i]]);
+                if(cols[columns[i]].summary)
+                    calculateSummary(columns[i]);
             }
             calculateSummary(col);
         }
@@ -477,6 +484,10 @@
             $(table).find('tr:not(.noedit):last').after(tr);
             // Regitrar elementos que causan que se ejecute el calculo (Adición de eventos)
             setEvents();
+            for(var kk in cols){
+                if(cols[kk].summary)
+                    calculateSummary(cols[kk].name);
+            }
         }
         
         /**
