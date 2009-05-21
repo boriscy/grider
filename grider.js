@@ -65,6 +65,7 @@
         var defaults = {
             initCalc: true,
             addRow: true,
+            addRowWithTab: true,
             delRow: true,
             decimals: 2,
             addRowText: '<caption><a href="#">Adicionar Fila</a></caption>',
@@ -152,7 +153,20 @@
 
             // Adiciona eventos a los elementos input[type="text"] que esten relacionados a una formula
             setEvents();
-            //console.log(cols);///////
+            //En caso de que se adicione una nueva fila
+            if(config.addRowWithTab) 
+                addRowWithTab();
+        }
+
+        /**
+         * Permite adicionar una nueva fila si se hace tab en la última fila en el vinculo de borrar
+         */
+        function addRowWithTab() {
+            $(table).find("tr:not(.noedit):last a.delete").live("keydown",function(e) {
+                if(e.keyCode == 9) {
+                    addRow();
+                }
+            });
         }
 
         /**
@@ -481,6 +495,7 @@
             setColType: setColType,
             findColBy: findColBy,
             addRow: addRow,
+            addRowWithTab: addRowWithTab,
             delRow: delRow,
             rowNumber: rowNumber
         }
