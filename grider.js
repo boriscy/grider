@@ -128,7 +128,7 @@
             }
             for(var k in cols){
                 if(cols[k].summary)
-                    calculateSummary(cols[k]);
+                    calculateSummary(k);
             };
             
             // Permitir adicionado de filas
@@ -234,9 +234,9 @@
         * @param String col
         */
         function calculateSummary(col) {
-            
             var summary = cols[col].summary;
-            var cells = $(table).find('tr:not(.noedit) td:eq(' + cols[col].pos + ')');
+            var pos = parseInt(cols[col].pos) + 1;
+            var cells = $(table).find('tr:not(.noedit) td:nth-child(' + pos + ')');
             var res = 0, sum = 0, max = null, min = null;
 
             if(summary != 'count') {
@@ -251,10 +251,10 @@
 
                     switch(summary) {
                         case 'sum':
-                            sum+=val;
+                            sum+= val;
                             break;
                         case 'avg':
-                            sum+=val;
+                            sum+= val;
                             break;
                         case 'max':
                             if(!max){
@@ -291,20 +291,19 @@
          * @param Event e Evento que se generó
          */
         function fireCellEvent(e) {
-            
             var target = e.target || e.srcElement;
             if(target.nodeType == 1) {
-                var pos = $(target).parents('tr')[0].rowIndex;
+                var rowNum = $(target).parents('tr')[0].rowIndex;
+                var colNum = $(target).parents('td')[0].cellIndex;
                 
-                var col = findColBy(pos, 'pos');
-                
+                var col = findColBy(colNum, 'pos');
                 for(var k in cols) {
                     if(cols[k].formula) {
-                        try{
+                                                try{
                             var reg = '\\b'+ col.name +'\\b';
                             reg = new RegExp(reg);
                             if(reg.test(cols[k].formula)) {
-                                calculateFormula(k, pos);
+                                calculateFormula(k, rowNum);
                             }
                         }catch(e){}
                     }
@@ -364,7 +363,6 @@
          * @param DOM row Fila de la cual se ejecuta la formula
          */
         function calculateFormula(col, pos) {
-            //console.log("%s, %s",col, pos);
             var pat = cols[col].formula.match(/\b[a-z_-]+[0-9]*\b/ig);
             var formu = cols[col].formula;
             var row = $(table).find('tr:eq('+ pos + ')');
@@ -375,7 +373,7 @@
                     delete(pat[k]);
                 }
             }
-            
+            // Se prepara la formula para ser calculada
             for(var k in pat) {
                 var exp = 'td:eq(' + cols[pat[k]].pos + ') ' + cols[pat[k]].type;
                 var val = parseFloat( $(row).find(exp).val() ) || 0;
@@ -413,11 +411,14 @@
          */
         function addRow() {
             var tr = $(table).find('tr:not(.noedit):first').clone();
-            $(tr).find("td").each(function(index, elem) {
-                if($(elem).find("input, select, textarea").length > 0) {
-                    $(elem).find("input, select, textarea").val('');
+            for(col in cols) {
+                if($(tr).find("input, select, textarea").length > 0) {
+                    $(tr).find("input[type=text], input[type=hidden], textarea, select").val('');
+                    $(tr).find("input[type=radio], input[type=checkbox]").attr('checked', false);
                 }
-            });
+                if(cols[k].type == "" && cols[k].formula)
+                    $(tr).find("td:eq(" + cols[k].pos + ")").html('');
+            };
             if(config['countRow']) {
                 var fila = parseInt($(table).find('tr:not(.noedit):last td:eq('+ config['countRowRow'] +')').html()) + 1;
                 $(tr).find('td:eq('+ config['countRowRow'] +')').html(fila);
@@ -485,4 +486,3 @@
     }
 
 })(jQuery);
-

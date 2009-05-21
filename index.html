@@ -11,6 +11,7 @@ table{border-collapse:collapse}
 .num{text-align:right}
 input{width: 8em;}
 td{padding: 2px;}
+.summary{text-align: right; font-weight: bold;}
 </style>
 </head>
 <body>
@@ -21,6 +22,7 @@ td{padding: 2px;}
                 <th col="producto">Producto</th>
                 <th col="precio">Precio</th>
                 <th col="cantidad">Cantidad</th>
+                <th col="descuento">Descuento</th>
                 <th col="subtotal" formula="precio*cantidad" summary="sum">Subtotal</th>
             </tr>
             <tr>
@@ -44,6 +46,9 @@ td{padding: 2px;}
                 <td>
                     <input name="cantidad" type="text" class="num" />
                 </td>
+                <td>
+                    <input name="cantidad" type="checkbox" />
+                </td>
                 <td class="num">
                 </td>
             </tr>
@@ -52,10 +57,10 @@ td{padding: 2px;}
     </div>
 <script>
 $(document).ready(function(){
-    $('#table1').grider();
+    $('#table1').grider({countRow: true, countRowAdd: true});
     
     $('#boton1').click(function(){
-        $('#table1').grider({countRow: true, countRowAdd: true});
+        $('#table1').grider();
     });
 });
 </script>
