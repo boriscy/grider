@@ -23,7 +23,7 @@ td{padding: 2px;}
                 <th col="precio">Precio</th>
                 <th col="cantidad">Cantidad</th>
                 <th col="descuento">Descuento</th>
-                <th col="subtotal" formula="precio*cantidad" summary="sum">Subtotal</th>
+                <th col="subtotal" formula="precio*cantidad*(1 - 0.10 * descuento)" summary="sum">Subtotal</th>
             </tr>
             <tr>
                 <td>
@@ -44,7 +44,7 @@ td{padding: 2px;}
                     <input name="precio" type="text" class="num" value="10" />
                 </td>
                 <td>
-                    <input name="cantidad" type="text" class="num" />
+                    <input name="cantidad" type="text" class="num" value="1" />
                 </td>
                 <td>
                     <input name="cantidad" type="checkbox" />
@@ -52,15 +52,84 @@ td{padding: 2px;}
                 <td class="num">
                 </td>
             </tr>
-        </table>
+            <tr>
+                <td>
+                    <select name="precio" >
+                        <option value="1">Computadora</option>
+                        <option value="2">Iphone</option>
+                        <option value="3">Mouse</option>
+                        <option value="4">Teclado</option>
+                        <option value="5">Pantalla</option>
+                        <option value="6">Memoria USB</option>
+                        <option value="7">Quemador</option>
+                        <option value="8">Disco Duro</option>
+                        <option value="9">Motherboard</option>
+                        <option value="10">Case</option>
+                    </select>
+                </td>
+                <td>
+                    <input name="precio" type="text" class="num" value="2.33" />
+                </td>
+                <td>
+                    <input name="cantidad" type="text" class="num" value="3" />
+                </td>
+                <td>
+                    <input name="cantidad" type="checkbox" />
+                </td>
+                <td class="num">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="precio" >
+                        <option value="1">Computadora</option>
+                        <option value="2">Iphone</option>
+                        <option value="3">Mouse</option>
+                        <option value="4">Teclado</option>
+                        <option value="5">Pantalla</option>
+                        <option value="6">Memoria USB</option>
+                        <option value="7">Quemador</option>
+                        <option value="8">Disco Duro</option>
+                        <option value="9">Motherboard</option>
+                        <option value="10">Case</option>
+                    </select>
+                </td>
+                <td>
+                    <input name="precio" type="text" class="num" value="5.5" />
+                </td>
+                <td>
+                    <input name="cantidad" type="text" class="num" value="2" />
+                </td>
+                <td>
+                    <input name="cantidad" type="checkbox" />
+                </td>
+                <td class="num">
+                </td>
+            </tr>
+
+        </table><br/>
         <button id="boton1">Grider Tabla 1</button>
+        <h4>Código para esta tabla</h4>
+        <div>
+        # HTML en la primera Fila
+        &lt;tr&gt;<br>
+                &lt;th col="producto"&gt;Producto&lt;/th&gt;<br>
+                &lt;th col="precio"&gt;Precio&lt;/th&gt;<br>
+                &lt;th col="cantidad"&gt;Cantidad&lt;/th&gt;<br>
+
+                &lt;th col="descuento"&gt;Descuento&lt;/th&gt;<br>
+                &lt;th col="subtotal" formula=\"precio*cantidad\" summary=\"sum\"&gt;Subtotal&lt;/th&gt;<br>
+            &lt;/tr&gt;<br>
+        
+        # JavaScript<br/>
+#       $('#table1').grider({countRow: true, countRowAdd: true});<br/>
+        </div>
     </div>
 <script>
 $(document).ready(function(){
-    $('#table1').grider({countRow: true, countRowAdd: true});
-    
+        
     $('#boton1').click(function(){
-        $('#table1').grider();
+        $('#table1').grider({countRow: true, countRowAdd: true});
     });
 });
 </script>

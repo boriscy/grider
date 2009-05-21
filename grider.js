@@ -66,6 +66,7 @@
             initCalc: true,
             addRow: true,
             delRow: true,
+            decimals: 2,
             addRowText: '<caption><a href="#">Adicionar Fila</a></caption>',
             delRowText: '<td><a href="#" class="delete">borrar</a></td>',
             countRow: false,
@@ -151,7 +152,7 @@
 
             // Adiciona eventos a los elementos input[type="text"] que esten relacionados a una formula
             setEvents();
-            console.log(cols);///////
+            //console.log(cols);///////
         }
 
         /**
@@ -282,6 +283,7 @@
             }else{
                 res = cells.length;
             }
+            res = res.toFixed(config.decimals);
             $(table).find('tr.summary td:eq(' + cols[col].pos +')').html(res);
         }
 
@@ -315,7 +317,7 @@
         }
 
         /**
-         * Permite crear las funciones para cada una de las celdas
+         * Permite crear las funciones para cada una de las celdas y define que elementos tienen evento
          * @param DOM cell Celda o TD del cual se exrae la formula
          */
         function setFormula(cell) {
@@ -332,7 +334,7 @@
                     var reg = new RegExp(reg);
                     // Definir que elementos tienen evento
                     if( reg.test(formula)) {
-                        if(cols[k].type == 'input[type="text"]')
+                        if(cols[k].type != '')
                             cols[k]["event"] = true;
                     }
                 }
@@ -345,14 +347,22 @@
         */
         function setEvents() {
             for(k in cols) {
+                //console.log("%o , %o", k ,cols[k].event);
                 if(cols[k].event) {
                     var pos = parseInt(cols[k]['pos']) + 1;
                     var exp = 'tr td:nth-child(' + pos + ') ' + cols[k].type;
                     // Maldito Internet Explorer, no es posible usar "live"
-                    $(table).find(exp).unbind("change");
-                    $(table).find(exp).change( function(e) {
-                        fireCellEvent(e);
-                    });
+                    if(cols[k].type == 'input[type="text"]' || cols[k].type == 'textarea' || cols[k].type == 'select' ) {
+                        $(table).find(exp).unbind("change");
+                        $(table).find(exp).change( function(e) {
+                            fireCellEvent(e);
+                        });
+                    }else if( cols[k].type == 'input[type="checkbox"]') {
+                        $(table).find(exp).unbind("click");
+                        $(table).find(exp).click( function(e) {
+                            fireCellEvent(e);
+                        });
+                    }
                 }
             }
         }
@@ -366,7 +376,6 @@
             var pat = cols[col].formula.match(/\b[a-z_-]+[0-9]*\b/ig);
             var formu = cols[col].formula;
             var row = $(table).find('tr:eq('+ pos + ')');
-            
             // Solución para IE
             for(var k in pat) {
                 if(!/^\d+$/.test(k)) {
@@ -376,12 +385,18 @@
             // Se prepara la formula para ser calculada
             for(var k in pat) {
                 var exp = 'td:eq(' + cols[pat[k]].pos + ') ' + cols[pat[k]].type;
-                var val = parseFloat( $(row).find(exp).val() ) || 0;
+                var val = 0;
+                if(cols[pat[k]].type == 'input[type="checkbox"]') {
+                    val = $(row).find(exp).attr('checked') ? 1 : 0;
+                }else if(cols[pat[k]].type == 'input[type="text"]'){
+                    val = parseFloat( $(row).find(exp).val() )
+                }
                 var reg = new RegExp('\\b' + pat[k] + '\\b')
                 formu = formu.replace(reg, val);
             }
             
             var res = eval(formu);
+            res = res.toFixed(config.decimals);
             // Posicionando la respuesta correspondiente
             var cell = $(row).find('td:eq(' + cols[col].pos + ')');
             if(cols[col].type == "") {
@@ -427,21 +442,7 @@
             // Regitrar elementos que causan que se ejecute el calculo (Adición de eventos)
             setEvents();
         }
-
-        /**
-         * Define las columnas que deben tener evento, buscando todos los elementos comunes en las formulas
-         */
-        function setColsWithEvent() {
-            for(var k in cols) {
-                if(cols[k].formula) {
-                    
-                    if(cols[k].type == 'input[type="text"]') {
-                        cols[k].withEvent = true;
-                    }
-                }
-            }
-        }
-
+        
         /**
          * Permite borrar una fila
          */
