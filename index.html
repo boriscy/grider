@@ -27,7 +27,7 @@ td{padding: 2px;}
             </tr>
             <tr>
                 <td>
-                    <select name="precio" >
+                    <select name="det[item][0]" >
                         <option value="1">Computadora</option>
                         <option value="2">Iphone</option>
                         <option value="3">Mouse</option>
@@ -41,20 +41,20 @@ td{padding: 2px;}
                     </select>
                 </td>
                 <td>
-                    <input name="precio" type="text" class="num" value="10" />
+                    <input name="det[precio][0]" type="text" class="num" value="10" />
                 </td>
                 <td>
-                    <input name="cantidad" type="text" class="num" value="1" />
+                    <input name="det[cantidad][0]" type="text" class="num" value="1" />
                 </td>
                 <td>
-                    <input name="cantidad" type="checkbox" />
+                    <input name="det[descuento][0]" type="checkbox" />
                 </td>
                 <td class="num">
                 </td>
             </tr>
             <tr>
                 <td>
-                    <select name="precio" >
+                    <select name="det[item][1]" >
                         <option value="1">Computadora</option>
                         <option value="2">Iphone</option>
                         <option value="3">Mouse</option>
@@ -68,20 +68,20 @@ td{padding: 2px;}
                     </select>
                 </td>
                 <td>
-                    <input name="precio" type="text" class="num" value="2.33" />
+                    <input name="det[precio][1]" type="text" class="num" value="2.33" />
                 </td>
                 <td>
-                    <input name="cantidad" type="text" class="num" value="3" />
+                    <input name="det[cantidad][1]" type="text" class="num" value="3" />
                 </td>
                 <td>
-                    <input name="cantidad" type="checkbox" />
+                    <input name="det[descuento][1]" type="checkbox" />
                 </td>
                 <td class="num">
                 </td>
             </tr>
             <tr>
                 <td>
-                    <select name="precio" >
+                    <select name="det[item][2]" >
                         <option value="1">Computadora</option>
                         <option value="2">Iphone</option>
                         <option value="3">Mouse</option>
@@ -95,13 +95,13 @@ td{padding: 2px;}
                     </select>
                 </td>
                 <td>
-                    <input name="precio" type="text" class="num" value="5.5" />
+                    <input name="det[precio][2]" type="text" class="num" value="5.5" />
                 </td>
                 <td>
-                    <input name="cantidad" type="text" class="num" value="2" />
+                    <input name="det[cantidad][2]" type="text" class="num" value="2" />
                 </td>
                 <td>
-                    <input name="cantidad" type="checkbox" />
+                    <input name="det[descuento][2]" type="checkbox" />
                 </td>
                 <td class="num">
                 </td>
@@ -130,6 +130,7 @@ $(document).ready(function(){
         
     $('#boton1').click(function(){
         $('#table1').grider({countRow: true, countRowAdd: true});
+        $(this).hide();
     });
 });
 </script>

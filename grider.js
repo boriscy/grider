@@ -389,7 +389,7 @@
                 if(cols[pat[k]].type == 'input[type="checkbox"]') {
                     val = $(row).find(exp).attr('checked') ? 1 : 0;
                 }else if(cols[pat[k]].type == 'input[type="text"]'){
-                    val = parseFloat( $(row).find(exp).val() )
+                    val = parseFloat( $(row).find(exp).val() ) || 0
                 }
                 var reg = new RegExp('\\b' + pat[k] + '\\b')
                 formu = formu.replace(reg, val);
@@ -452,6 +452,10 @@
                 if(config['countRow']) {
                     rowNumber();
                 }
+            }
+            for(var k in cols) {
+                  if(cols[k].summary)
+                      calculateSummary(k);
             }
         }
 
