@@ -26,89 +26,89 @@ td{padding: 2px;}
 
  <table border="1" id="table1" >
             <tr>
-                <th col="producto">Producto</th>
-                <th col="precio" summary="max">Precio</th>
-                <th col="cantidad" summary="avg">Cantidad</th>
-                <th col="descuento">Descuento</th>
-                <th col="subtotal" formula="precio*cantidad*(1 - 0.10 * descuento)" summary="sum">Subtotal</th>
+                <th col="product">Product</th>
+                <th col="price" summary="max">Price</th>
+                <th col="quantity" summary="avg">Quantity</th>
+                <th col="discount">Discount</th>
+                <th col="subtotal" formula="price*quantity*(1 - 0.10 * discount)" summary="sum">Subtotal</th>
             </tr>
             <tr>
                 <td>
-                    <select name="det[0][item]" >
-                        <option value="1">Computadora</option>
+                    <select name="det[0][product]" >
+                        <option value="1">Computer</option>
                         <option value="2">Iphone</option>
-                        <option value="3">Mouse</option>
-                        <option value="4">Teclado</option>
+                        <option value="3" selected="selected">Mouse</option>
+                        <option value="4">Keyboard</option>
                         <option value="5">Pantalla</option>
-                        <option value="6">Memoria USB</option>
-                        <option value="7">Quemador</option>
-                        <option value="8">Disco Duro</option>
+                        <option value="6">USB Memmory</option>
+                        <option value="7">CD Burnner</option>
+                        <option value="8">Hard Disk</option>
                         <option value="9">Motherboard</option>
                         <option value="10">Case</option>
                     </select>
                 </td>
                 <td>
-                    <input name="det[0][precio]" type="text" class="num" value="10" />
+                    <input name="det[0][price]" type="text" class="num" value="10" />
                 </td>
                 <td>
-                    <input name="det[0][cantidad]" type="text" class="num" value="1" />
+                    <input name="det[0][quantity]" type="text" class="num" value="1" />
                 </td>
                 <td>
-                    <input name="det[0][descuento]" type="checkbox" />
+                    <input name="det[0][discount]" type="checkbox" checked="checked" />
                 </td>
                 <td class="num">
                 </td>
             </tr>
             <tr>
                 <td>
-                    <select name="det[1][item]" >
-                        <option value="1">Computadora</option>
+                    <select name="det[0][product]" >
+                        <option value="1">Computer</option>
                         <option value="2">Iphone</option>
                         <option value="3">Mouse</option>
-                        <option value="4">Teclado</option>
+                        <option value="4">Keyboard</option>
                         <option value="5">Pantalla</option>
-                        <option value="6">Memoria USB</option>
-                        <option value="7">Quemador</option>
-                        <option value="8">Disco Duro</option>
+                        <option value="6">USB Memmory</option>
+                        <option value="7">CD Burnner</option>
+                        <option value="8">Hard Disk</option>
                         <option value="9">Motherboard</option>
                         <option value="10">Case</option>
                     </select>
                 </td>
                 <td>
-                    <input name="det[1][precio]" type="text" class="num" value="2.33" />
+                    <input name="det[1][price]" type="text" class="num" value="2.33" />
                 </td>
                 <td>
-                    <input name="det[1][cantidad]" type="text" class="num" value="3" />
+                    <input name="det[1][quantity]" type="text" class="num" value="3" />
                 </td>
                 <td>
-                    <input name="det[1][descuento]" type="checkbox" />
+                    <input name="det[1][discount]" type="checkbox" />
                 </td>
                 <td class="num">
                 </td>
             </tr>
             <tr>
                 <td>
-                    <select name="det[2][item]" >
-                        <option value="1">Computadora</option>
+                    <select name="det[0][product]" >
+                        <option value="1">Computer</option>
                         <option value="2">Iphone</option>
                         <option value="3">Mouse</option>
-                        <option value="4">Teclado</option>
+                        <option value="4">Keyboard</option>
                         <option value="5">Pantalla</option>
-                        <option value="6">Memoria USB</option>
-                        <option value="7">Quemador</option>
-                        <option value="8">Disco Duro</option>
+                        <option value="6">USB Memmory</option>
+                        <option value="7">CD Burnner</option>
+                        <option value="8">Hard Disk</option>
                         <option value="9">Motherboard</option>
                         <option value="10">Case</option>
                     </select>
                 </td>
                 <td>
-                    <input name="det[2][precio]" type="text" class="num" value="5.5" />
+                    <input name="det[2][price]" type="text" class="num" value="5.5" />
                 </td>
                 <td>
-                    <input name="det[2][cantidad]" type="text" class="num" value="2" />
+                    <input name="det[2][quantity]" type="text" class="num" value="2" />
                 </td>
                 <td>
-                    <input name="det[2][descuento]" type="checkbox" />
+                    <input name="det[2][discount]" type="checkbox" />
                 </td>
                 <td class="num">
                 </td>
@@ -124,13 +124,27 @@ td{padding: 2px;}
 <script>
 // Tests
 $(document).ready(function() {
+  //$.Grider.prototype.defaults = {decimals:3};
   $('#table1').grider({countRow: true, countRowAdd: true}); 
   test("Table converted", function() {
-    ok(true, "Fine");
     var rows = $('#table1 tr').length;
     equals( 5, rows, "Expected 5 Rows" );
     equals(2, $('#table1 tr.noedit').length, 0, "2 Rows with .noedit class");
     equals(7, $('#table1 tr:not(.noedit):first td').length, "7 Columns");
-  })
+    // Checks for added cols
+    equals("Nº", $("#table1 tr:first th:first").html(), "added Number rows");
+    equlas("", $());
+  });
+
+  test("Operations should be correct", function() {
+    // Formulas
+    equals( "9.00", $('#table1 tr:not(.noedit):first td:eq(5)').html(), "Subtotal with discount should be 9.00");
+    equals( "6.99", $('#table1 tr:not(.noedit):eq(1) td:eq(5)').html(), "Subtotal with discount should be 6.99");
+    // Summary
+    equals( "10.00", $('#table1 tr.noedit:last td:eq(2)').html(), "Summary for max in product should be 10.00");
+    equals( "2.00", $('#table1 tr.noedit:last td:eq(3)').html(), "Summary for avg in price should be 2.00");
+    equals( "26.99", $('#table1 tr.noedit:last td:eq(5)').html(), "Summary for subtotal should be 26.99");
+
+  });
 });
 </script>

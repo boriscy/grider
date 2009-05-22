@@ -62,7 +62,7 @@
         /**
          * Valores por defecto
          */
-        var defaults = {
+        this.defaults = {
             initCalc: true,
             addRow: true,
             addRowWithTab: true,
@@ -75,6 +75,8 @@
             countRowAdd: false,
             addedRow: false
         };
+        var defaults = this.defaults;
+
         if(config) {
             for(var k in defaults) {
                 config[k] = config[k] || defaults[k];
