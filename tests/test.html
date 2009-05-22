@@ -2,10 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<!--<link type="text/css" href="stylesheets/style.css" media="all"  rel="stylesheet"/>-->
-<script type="text/javascript" src="jquery-1.3.2.min.js" ></script>
-<script type="text/javascript" src="grider.js" ></script>
-<title>Grider</title>
+<link type="text/css" href="testsuite.css" media="screen"  rel="stylesheet"/>
+<script type="text/javascript" src="../jquery-1.3.2.min.js" ></script>
+<script type="text/javascript" src="../grider.js" ></script>
+<script type="text/javascript" src="testrunner.js"></script>
+<title>Grider Tests</title>
 <style>
 table{border-collapse:collapse}
 .num{text-align:right}
@@ -15,11 +16,15 @@ td{padding: 2px;}
 </style>
 </head>
 <body>
-    <div>
-        <h2>Ejemplo 1</h2>
-        <form method="post" action="post.php" >
 
-        <table border="1" id="table1" >
+        <h1>Tests for Grider</h1>
+        <h2 id="banner"></h2>
+        <h2 id="userAgent"></h2>
+        <ol id="tests"></ol>
+        <!--<div id="results"></div>-->
+        <div id="main"></div>  
+
+ <table border="1" id="table1" >
             <tr>
                 <th col="producto">Producto</th>
                 <th col="precio" summary="max">Precio</th>
@@ -110,36 +115,22 @@ td{padding: 2px;}
             </tr>
 
         </table>
-        
-        <input type="submit" value="Ingresar datos" id="submit1" disabled="true"/>
-        </form>
-        <br/>
-        <a id="boton1" href="#">Convertir Tabla 1</a>
-        <h4>Código para esta tabla</h4>
-        <div>
-        # HTML en la primera Fila
-        &lt;tr&gt;<br>
-                &lt;th col="producto"&gt;Producto&lt;/th&gt;<br>
-                &lt;th col="precio" summary="max"&gt;Precio&lt;/th&gt;<br>
-                &lt;th col="cantidad" summary="avg"&gt;Cantidad&lt;/th&gt;<br>
 
-                &lt;th col="descuento"&gt;Descuento&lt;/th&gt;<br>
-                &lt;th col="subtotal" formula="precio*cantidad*(1 - 0.10 * descuento)" summary="sum"&gt;Subtotal&lt;/th&gt;<br>
-            &lt;/tr&gt;<br>
-        
-        # JavaScript<br/>
-#       $('#table1').grider({countRow: true, countRowAdd: true});<br/>
-        </div>
-    </div>
-<script>
-$(document).ready(function(){
-    //$('#submit1').hide();
-    $('#boton1').click(function(){
-        $('#table1').grider({countRow: true, countRowAdd: true});
-        $(this).hide();
-        $('#submit1').attr('disabled', false)
-    });
-});
-</script>
+
+
+<div id="testDiv"></div>
 </body>
 </html>
+<script>
+// Tests
+$(document).ready(function() {
+  $('#table1').grider({countRow: true, countRowAdd: true}); 
+  test("Table converted", function() {
+    ok(true, "Fine");
+    var rows = $('#table1 tr').length;
+    equals( 5, rows, "Expected 5 Rows" );
+    equals(2, $('#table1 tr.noedit').length, 0, "2 Rows with .noedit class");
+    equals(7, $('#table1 tr:not(.noedit):first td').length, "7 Columns");
+  })
+});
+</script>
