@@ -151,6 +151,7 @@
                 });
                 $(table).find('a.delete').live("click", function(){
                     delRow(this);
+                    return true;
                 });
             }
 
@@ -328,9 +329,7 @@
                     }
                 }
 
-            }/*else{
-                col = jQuery(target).parents('td').eq(0)[0].cellIndex;
-            }*/
+            }
         }
 
         /**
@@ -453,7 +452,7 @@
                 var control = $(table).find('tr:not(.noedit):last').find('input, select, textarea')[0] || false;
                 // Determinar el número de fila del los controles
                 if(control.name) {
-                    config["formPos"] = parseInt( control.name.replace(/^.*\[([0-9]+)\].*$/ig, "$1") ) || '';
+                    config["formPos"] = control.name.replace(/^.*\[([0-9]+)\].*$/ig, "$1") || '';
                 }
                 config.addedRow = true
             }
@@ -462,6 +461,7 @@
 
             if($(tr).find("input, select, textarea").length > 0) {
                 $(tr).find("input, textarea, select").each(function(index, elem) {
+                    // Change the name of the fields
                     var newName = '';
                     if(config.formPos !== '') {
                         newName = elem.name.replace(/\[[0-9]+\]/i, '[' + config.formPos + ']');

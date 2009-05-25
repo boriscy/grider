@@ -61,7 +61,7 @@ td{padding: 2px;}
             </tr>
             <tr>
                 <td>
-                    <select name="det[0][product]" >
+                    <select name="det[1][product]" >
                         <option value="1">Computer</option>
                         <option value="2">Iphone</option>
                         <option value="3">Mouse</option>
@@ -88,7 +88,7 @@ td{padding: 2px;}
             </tr>
             <tr>
                 <td>
-                    <select name="det[0][product]" >
+                    <select name="det[2][product]" >
                         <option value="1">Computer</option>
                         <option value="2">Iphone</option>
                         <option value="3">Mouse</option>
@@ -125,26 +125,74 @@ td{padding: 2px;}
 // Tests
 $(document).ready(function() {
   //$.Grider.prototype.defaults = {decimals:3};
-  $('#table1').grider({countRow: true, countRowAdd: true}); 
+  $('#table1').grider({countRow: true, countRowAdd: true});
+  module("Table creation");
   test("Table converted", function() {
+    expect(6);
     var rows = $('#table1 tr').length;
-    equals( 5, rows, "Expected 5 Rows" );
-    equals(2, $('#table1 tr.noedit').length, 0, "2 Rows with .noedit class");
-    equals(7, $('#table1 tr:not(.noedit):first td').length, "7 Columns");
+    equals( rows, 5, "Expected 5 Rows" );
+    equals( $('#table1 tr.noedit').length, 2, "2 Rows with .noedit class");
+    equals($('#table1 tr:not(.noedit):first td').length, 7, "7 Columns");
     // Checks for added cols
-    equals("Nº", $("#table1 tr:first th:first").html(), "added Number rows");
-    equlas("", $());
+    equals($('#table1 tr:first th:first').html(), "Nº", "added Number rows");
+    equals( $('#table1 tr:not(.noedit):first td:first').html(), "1", "First line Should be 1");
+    equals($('#table1 tr:not(.noedit):last td:first').html(), "3", "Las Line Should be 3");
   });
 
   test("Operations should be correct", function() {
+    expect(5);
     // Formulas
-    equals( "9.00", $('#table1 tr:not(.noedit):first td:eq(5)').html(), "Subtotal with discount should be 9.00");
-    equals( "6.99", $('#table1 tr:not(.noedit):eq(1) td:eq(5)').html(), "Subtotal with discount should be 6.99");
+    equals( $('#table1 tr:not(.noedit):first td:eq(5)').html(), "9.00", "Subtotal with discount should be 9.00");
+    equals( $('#table1 tr:not(.noedit):eq(1) td:eq(5)').html(), "6.99", "Subtotal with discount should be 6.99");
     // Summary
-    equals( "10.00", $('#table1 tr.noedit:last td:eq(2)').html(), "Summary for max in product should be 10.00");
-    equals( "2.00", $('#table1 tr.noedit:last td:eq(3)').html(), "Summary for avg in price should be 2.00");
-    equals( "26.99", $('#table1 tr.noedit:last td:eq(5)').html(), "Summary for subtotal should be 26.99");
+    equals( $('#table1 tr.noedit:last td:eq(2)').html(), "10.00", "Summary for max in product should be 10.00");
+    equals( $('#table1 tr.noedit:last td:eq(3)').html(), "2.00", "Summary for avg in price should be 2.00");
+    equals( $('#table1 tr.noedit:last td:eq(5)').html(), "26.99", "Summary for subtotal should be 26.99");
 
   });
+
+  module("Table and data modification");
+  test("Modify numbers", function() {
+    expect(3);
+    $('table tr:not(.noedit):first input:eq(1)').val(3.5).change();
+    //$('table tr:not(.noedit):first input:eq(1)').val(3).change();
+    equals($('table tr:not(.noedit):first td:eq(5)').html(), "31.50", "Subtotal for the changed line");
+    equals($('table tr.noedit:last td:eq(3)').html(), "2.83", "Summary avg for changed input should be 2.83");
+    equals($('table tr.noedit:last td:eq(5)').html(), "49.49", "Summary for subtotal should be 49.49");
+  });
+
+  test("Add new Lines and modify", function() {
+    expect(6);
+    $("#table1 caption a").click();
+    $("#table1 caption a").click();
+    equals($('#table1 tr:not(.noedit)').length, 5, "There should be two added Rows, total: 5 Rows");
+    equals($('#table1 tr:not(.noedit):eq(3) select:first').attr('name'), "det[3][product]", "Name of the added line should be 'det[3][product]'");
+    equals($('#table1 tr:not(.noedit):eq(4) select:first').attr('name'), "det[4][product]", "Name of the added line should be 'det[4][product]'");
+    // Check the average
+    equals($('#table1 tr.noedit:last td:eq(3)').html(), "1.70", "Summary avg should be 1.70");
+    // Check the line numbers
+    equals($('#table1 tr:not(.noedit):eq(3) td:eq(0)').html(), "4", "Line Numbers");
+    equals($('#table1 tr:not(.noedit):eq(4) td:eq(0)').html(), "5", "Line Numbers");
+  });
+
+  test("Modify values from the added lines", function() {
+    
+    //expect(4);
+    $('#table1 tr:not(.noedit):eq(3) input:eq(0)').val(2.33).change();
+    $('#table1 tr:not(.noedit):eq(3) input:eq(1)').val(4).change();
+    //$('#table1 tr:not(.noedit):eq(3) input[type="checkbox"]').click().attr('checked', true);
+    $('#table1 tr:not(.noedit):eq(3) input[type="checkbox"]').change().attr('checked', true);
+    
+    // Second added Row
+    $('#table1 tr:not(.noedit):eq(4) input:eq(0)').val(12.22).change();
+    $('#table1 tr:not(.noedit):eq(4) input:eq(1)').val(3.35).change();
+
+    //ok($('table input[type="checkbox"]:eq(3)').attr('checked'), "checkbox should be checked");
+    equals($('#table1 tr:not(.noedit):eq(3) td:eq(5)').html(), "9.32", "Subtotal" );
+    // When you click with the line below it does not trigger the events
+    //$('#table1 tr:not(.noedit):eq(3) input[type="checkbox"]').click();
+
+  });
+
 });
 </script>
