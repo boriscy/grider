@@ -124,6 +124,7 @@ td{padding: 2px;}
 <script>
 // Tests
 $(document).ready(function() {
+  var elem;
   //$.Grider.prototype.defaults = {decimals:3};
   $('#table1').grider({countRow: true, countRowAdd: true});
   module("Table creation");
@@ -177,22 +178,32 @@ $(document).ready(function() {
 
   test("Modify values from the added lines", function() {
     
-    //expect(4);
+    expect(4);
     $('#table1 tr:not(.noedit):eq(3) input:eq(0)').val(2.33).change();
     $('#table1 tr:not(.noedit):eq(3) input:eq(1)').val(4).change();
     //$('#table1 tr:not(.noedit):eq(3) input[type="checkbox"]').click().attr('checked', true);
-    $('#table1 tr:not(.noedit):eq(3) input[type="checkbox"]').change().attr('checked', true);
+    elem = $('#table1 tr:not(.noedit):eq(3) input[type="checkbox"]')[0];//change().attr('checked', true);
+    fireunit.click(elem);// Required to fire the event correctly
     
     // Second added Row
     $('#table1 tr:not(.noedit):eq(4) input:eq(0)').val(12.22).change();
     $('#table1 tr:not(.noedit):eq(4) input:eq(1)').val(3.35).change();
 
     //ok($('table input[type="checkbox"]:eq(3)').attr('checked'), "checkbox should be checked");
-    equals($('#table1 tr:not(.noedit):eq(3) td:eq(5)').html(), "9.32", "Subtotal" );
-    // When you click with the line below it does not trigger the events
+    equals($('#table1 tr:not(.noedit):eq(3) td:eq(5)').html(), "8.39", "Subtotal should be 8.39");
+    equals($('#table1 tr.noedit:eq(1) td:eq(5)').html(), "98.82", "Summary of subtotal");
+    equals($('#table1 tr.noedit:eq(1) td:eq(2)').html(), "12.22", "Summary quantity");
+    equals($('#table1 tr.noedit:eq(1) td:eq(3)').html(), "3.17", "Summary price");
+
     //$('#table1 tr:not(.noedit):eq(3) input[type="checkbox"]').click();
 
   });
 
+  test("Delete lines and test for calculations", function() {
+    
+    //expect(4);
+    fireunit.click( $('#table1 tr:not(.noedit):eq(1) a.delete')[0] );
+    equals( $('#table1 tr:not(.noedit)').length, 4, "Number of rows, after delete");
+  });
 });
 </script>

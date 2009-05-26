@@ -17,32 +17,31 @@
     });
 
   /**
-  * Transforms a grid that contains data, and allows to do calculations con form elements
-  * in a simple way. Example:
+  * Transforma un grid que contiene datos asi como elementos de formulario para permitri realizar calculos
+  * de una forma simple, para poder utilizar se lo hace de la siguiente forma
   * <table id="grid">
   *   <tr>
-  *     <th col="price" summary="min">Price</th>
-  *     <th col="quantity">Quantity</th>
-  *     <th col="discount">Discount</th>
-  *     <th col="subtotal" formula="price*quantity+(1-0.9(discount))" summary="sum">Subtotal</th>
+  *     <th col="precio" summary="min">Precio</th>
+  *     <th col="cantidad">Cantidad</th>
+  *     <th formula="precio*cantidad" summary="sum">Subtotal</th>
   *   </tr>
   *   <tr>
-  *     <td><input type="text" name="det[0][quantity]" /></td>
-  *     <td><input type="text" name="det[0][price]" /></td>
-  *     <td><input type="checkbox" name="det[0][discount]" /></td>
-  *     <td> </td>
+  *     <td>Precio</td>
+  *     <td>Cantidad</td>
+  *     <td></td>
   *   </tr>
   * </table>
   *
-  * And then you execute $('#grid').grider();
+  * Y despues se ejecuta $('#grid').grider({initCalc: false});
   *
-  * @attr col: Defines the col name, it is a unique identifier for that col in the table
+  * @attr col: Define el nombre o identificador único para cada columna de la tabla
   *
-  * @attr summary: Defines the type of calculation it will be done on the column,
-  * operations that can be done are "sum", "avg", "max", "min" and "count"
+  * @attr summary: Define un campo de suma o total que adiciona una fila al final de la tabla y
+  * que puede realizar las operaciones "sum" (Suma), "avg" (Promedio), "max" (Máxmimo),
+  * "min" (Mínimo) y "count" (Conteo)
   *
-  * @attr formula: Calculates the formula with the columns you defined, right now it does simple calculations, 
-  * the formula is evaluated eval(formula), to calculate
+  * @attr formula: Calculala formula que se escribe con las columnas que se haya introducido, el resultado
+  * es presentado en la columna donde ha sido definido
   *
   * Configuraciones de la variable config
   * @param boolean config['initCalc'] Define si se realizara los calculos de (formula) al iniciar
@@ -64,7 +63,6 @@
          * Valores por defecto
          */
         var defaults = Grider.defaults;
-        var config;
 
         if(config) {
             for(var k in defaults) {
@@ -90,14 +88,14 @@
             // Permite contar las filas
             if(config['countRow']) {
                 if(config['countRowAdd']) {
-                    $(table).find('tr.noedit:first').prepend('<th>'+ config.countRowText +'</th>');
+                    $(table).find('tr.noedit:first').prepend('<th>Nº</th>');
                     $(table).find('tr:not(.noedit)').each(function(index, elem){
                         var ind = index+1;
                         $(elem).prepend('<td>'+ind+'</td>');
                     });
                 }
             }
- 
+            
             for(var i = 0, l = t.rows[0].cells.length; i < l; i++) {
                 setColumn(t.rows[0].cells[i], i);
             }
@@ -469,8 +467,8 @@
             if(cols[k].type == "" && cols[k].formula)
                 $(tr).find("td:eq(" + cols[k].pos + ")").html('');
             if(config['countRow']) {
-                var fila = parseInt($(table).find('tr:not(.noedit):last td:eq('+ config['countRowCol'] +')').html()) + 1;
-                $(tr).find('td:eq('+ config['countRowCol'] +')').html(fila);
+                var fila = parseInt($(table).find('tr:not(.noedit):last td:eq('+ config['countRowRow'] +')').html()) + 1;
+                $(tr).find('td:eq('+ config['countRowRow'] +')').html(fila);
             }
             $(table).find('tr:not(.noedit):last').after(tr);
             // Regitrar elementos que causan que se ejecute el calculo (Adición de eventos)
@@ -501,8 +499,7 @@
          * Numera las filas cuando se borran
          */
         function rowNumber() {
-            var pos = parseInt(config.countRowCol) + 1;
-            $(table).find('tr:not(.noedit) td:nth-child('+ pos +')').each(function(index, elem) {
+            $(table).find('tr:not(.noedit) td:eq('+config['countRowRow']+')').each(function(index, elem) {
                 var ind = index + 1;
                 $(elem).html(ind);
             });
@@ -510,7 +507,6 @@
         
         return {
             cols: cols,
-            config: config,
             summaryRow: summaryRow,
             table: table,
             formulaSet: formulaSet,
@@ -535,38 +531,36 @@
 
 // Defauls English
 Grider = {
-    defaults : {
-        initCalc: true,
-        addRow: true,
-        addRowWithTab: true,
-        delRow: true,
-        decimals: 2,
-        addRowText: '<caption><a href="#">Add Row</a></caption>',
-        delRowText: '<td><a href="#" class="delete">delete</a></td>',
-        countRow: false,
-        countRowText: 'Nº',
-        countRowCol: 0,
-        countRowAdd: false,
-        addedRow: false
-    }
+  defaults : {
+      initCalc: true,
+      addRow: true,
+      addRowWithTab: true,
+      delRow: true,
+      decimals: 2,
+      addRowText: '<caption><a href="#">Add Row</a></caption>',
+      delRowText: '<td><a href="#" class="delete">delete</a></td>',
+      countRow: false,
+      countRowRow: 0,
+      countRowAdd: false,
+      addedRow: false
+  }
 }
 
 //Defauls Spanish 
 /*
 Grider = {
-    defaults : {
-        initCalc: true,
-        addRow: true,
-        addRowWithTab: true,
-        delRow: true,
-        decimals: 2,
-        addRowText: '<caption><a href="#">Adicionar Fila</a></caption>',
-        delRowText: '<td><a href="#" class="delete">borrar</a></td>',
-        countRow: false,
-        countRowText: 'Nº',
-        countRowCol: 0,
-        countRowAdd: false,
-        addedRow: false
-    }
+  defaults : {
+      initCalc: true,
+      addRow: true,
+      addRowWithTab: true,
+      delRow: true,
+      decimals: 2,
+      addRowText: '<caption><a href="#">Adicionar Fila</a></caption>',
+      delRowText: '<td><a href="#" class="delete">borrar</a></td>',
+      countRow: false,
+      countRowRow: 0,
+      countRowAdd: false,
+      addedRow: false
+  }
 }
 */
