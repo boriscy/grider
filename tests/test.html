@@ -24,6 +24,7 @@ td{padding: 2px;}
         <!--<div id="results"></div>-->
         <div id="main"></div>  
 
+<h3>NOTE: Tests require <a href="http://fireunit.org/">fireunit</a> to work</h3>
  <table border="1" id="table1" >
             <tr>
                 <th col="product">Product</th>
@@ -204,6 +205,18 @@ $(document).ready(function() {
     //expect(4);
     fireunit.click( $('#table1 tr:not(.noedit):eq(1) a.delete')[0] );
     equals( $('#table1 tr:not(.noedit)').length, 4, "Number of rows, after delete");
+    equals( $('#table1 tr.noedit:last td:eq(5)').html(), "91.83", "Calculate subtotal sumary");
+    equals( $('#table1 tr.noedit:last td:eq(3)').html(), "3.21", "Calculate avg sumary");
+    var countRow = true;
+    // Determine if the row numbers are right
+    $('#table1 tr:not(.noedit)').each(function(index, el) {
+      var pos = index +1;
+      if(pos != el.cells[0].innerHTML ) {
+        countRow = false;
+        return false;
+      }
+    });
+    ok(countRow, "Count of Rows");
   });
 });
 </script>

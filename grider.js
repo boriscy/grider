@@ -47,21 +47,18 @@
   * Configuraciones de la variable config
   * @param boolean config['initCalc'] Define si se realizara los calculos de (formula) al iniciar
   *
-  * @param boolean config['addRow'] Define si es que aparecera un icono para poder adicionar filas
-  * @param string config['addRowText'] Texto que aparecera dentro del caption, debe tener la siguiente
-  * forma <caption><a href="#">$Contenido</a></caption>donde $contenido puede ser cualquier cadena HTML que se presentará
-  * @param boolean config['delRow'] Define si es que aparecera un vinculo para borrar la fila
-  * @param string config['delRowText'] Texto que aparecerá para poder borrar fila, el texto siempre debe tener la clase (delete)
-  * ej: <a href="#" class="delete">borrar</a>
-  * @param boolean config['countRow'] Indica si es que se va a realizar el conteo de las filas, esto permite que una correcta numeración
-  * cuando se añade o se borran filas
-  * @param integer config['countRow'] Define en que columna se generara los numeros de cada fila
-  * @param boolean config['countRowAdd'] Indica si es que se va adicionar una columna
+  * @param boolean config['addRow'] Defines if the add row link will appear
+  * @param string config['addRowText'] Text that will display to add rows
+  * @param boolean config['delRow'] Defines if it will appear the delete link to delete a row
+  * @param string config['delRowText'] Text that will be displayed for deleting a row
+  * @param boolean config['countRow'] Indicates if it will do count the rows, necessary for adding and deleting rows
+  * @param integer config['countRowCol'] Defines the column in which the count will be displayed, defauls = 0
+  * @param boolean config['countRowAdd'] Indicates if it will be able to add Rows
   */
     $.Grider = function(table, config) {
         
         /**
-         * Valores por defecto
+         * Defaults
          */
         var defaults = Grider.defaults;
         var config;
@@ -75,14 +72,14 @@
         }
 
         var cols = {};
-        // Identifica si la fila de summary fue creada
+        // Identifies if there is a summary column
         var summaryRow = false;
-        var formulaSet = false; // Indica si es que se a adicionado una formula
+        var formulaSet = false; // Indicates if the formula was added
         config = config || {};
         setGrider(table);
 
         /**
-        * Prepara todos los datos a ser usados en la tabla
+        * This function prepares all to set the table
         * @param DOM t Table
         */
         function setGrider(t) {
@@ -101,14 +98,14 @@
             for(var i = 0, l = t.rows[0].cells.length; i < l; i++) {
                 setColumn(t.rows[0].cells[i], i);
             }
-            // Tipos de columna
+            // Types of columns
             setColType();
-            // Necesario para poder realizar las formulas
+            // Setting formulas and summaries
             for(var i = 0, l = t.rows[0].cells.length; i < l; i++) {
                 setFormula(t.rows[0].cells[i]);
                 setSummary(t.rows[0].cells[i]);
             }
-            // Calcular formulas la primera ves
+            // Calculation of formulas for the first Time
             if(formulaSet && config.initCalc) {
                 var rows = $(table).find('tr:not(.noedit)');
                 rows.each(function(index, elem) {
@@ -125,7 +122,7 @@
                     calculateSummary(k);
             };
             
-            // Permitir adicionado de filas
+            // Allow to add rows
             if(config['addRow']) {
                 $(table).append(config['addRowText']);
                 $(table).find("caption a").click(function() {
@@ -133,7 +130,7 @@
                 });
             }
 
-            // Permitir borrar filas
+            // Allow to delete rows
             if(config['delRow']) {
                 $(table).find('tr:not(.noedit)').each(function(index,elem){
                     $(elem).append(config['delRowText']);
@@ -144,15 +141,15 @@
                 });
             }
 
-            // Adiciona eventos a los elementos input[type="text"] que esten relacionados a una formula
+            // Add events to the elements in the table, elements that are related to a summary or formula
             setEvents();
-            //En caso de que se adicione una nueva fila
+            // In case that it adds a new row
             if(config.addRowWithTab) 
                 addRowWithTab();
         }
 
         /**
-         * Permite adicionar una nueva fila si se hace tab en la última fila en el vinculo de borrar
+         * Allows to add a new row, the new row is added at the endof the editable rows
          */
         function addRowWithTab() {
             $(table).find("tr:not(.noedit):last a.delete").live("keydown",function(e) {
@@ -163,10 +160,10 @@
         }
 
         /**
-        * Determina el tipo de elemento que contiene cada elemento para poder seleccionar
+        * Determines the type of element that is contained in the TD
         */
         function setColType() {
-            var row = $(table).find('tr:not(.noedit):first')[0]; // Encuentra la primera fila que no tenga clase .noedit en su tr (fila)
+            var row = $(table).find('tr:not(.noedit):first')[0]; // Finds the first row tha is editable
             
             for(var k in cols) {
                 var cell = $(row).find('td:eq(' + cols[k].pos + ')')[0];
@@ -193,16 +190,16 @@
                             break;
                     }
                 }else{
-                    // sirve para poder utilizar el selector jQuery
+                    // Allows to use jQuery selectors
                     cols[k]['type'] = '';
                 }
             }
         }
 
         /**
-         * Permite definir las columnas según su nombre
-         * @param DOM cell Celda o TD que se esta revisando
-         * @param integer pos Número de columna comenzando desde 0
+         * Allows to define columns with its names
+         * @param DOM cell TD
+         * @param integer pos Column number, starts on 0
          */
         function setColumn(cell, pos) {
             var col = $(cell).attr('col');
@@ -214,8 +211,8 @@
         }
 
         /**
-         * Permite que las columnas puedan realizar operaciones para hacer sumas, promedios, etc en la columna
-         * @param DOM cell Celda
+         * Alows columns to calculate summaries, like avg (average), sum, max, count
+         * @param DOM cell
          */
         function setSummary(cell) {
             var summary = $(cell).attr('summary');
@@ -224,7 +221,7 @@
                 cols[col]['summary'] = summary;
             }
 
-            // Adicionar la fila de summary
+            // Add the summary row
             if(!summaryRow) {
                 var l = table.rows[0].cells.length;
                 var html = '<tr class="summary noedit">';
@@ -238,8 +235,8 @@
         }
 
         /**
-        * Permite calcular los summary que son resumenes de total al final de la fila
-        * @param String col
+        * Calculates the summary of a column
+        * @param String col, name of the column
         */
         function calculateSummary(col) {
             var summary = cols[col].summary;
@@ -296,8 +293,8 @@
 
 
         /**
-         * Llama a la función o funciones que sean requiridas
-         * @param Event e Evento que se generó
+         * Fires the event required
+         * @param Event e
          */
         function fireCellEvent(e) {
             var target = e.target || e.srcElement;
@@ -322,8 +319,8 @@
         }
 
         /**
-         * Permite crear las funciones para cada una de las celdas y define que elementos tienen evento
-         * @param DOM cell Celda o TD del cual se exrae la formula
+         * creates the formulas to be calculated
+         * @param DOM cell
          */
         function setFormula(cell) {
       
@@ -333,7 +330,7 @@
             if(formula) {
                 cols[col]['formula'] = formula;
         
-                // Regitrar elementos que causan que se ejecute el calculo (Adición de eventos)
+                // Register elements that trigger the calculation of a formula
                 for(var k in cols) {
                     reg = "\\b" + k + "\\b";
                     var reg = new RegExp(reg);
@@ -347,15 +344,15 @@
         }
 
         /**
-        * Prepara los evento que son adicionados a los elementos dentro del grid
-        * @param string col Nombre de la columna
+        * Prepares the events requied in the grid
+        * @param string col, name of the column
         */
         function setEvents() {
             for(k in cols) {
                 if(cols[k].event) {
                     var pos = parseInt(cols[k]['pos']) + 1;
                     var exp = 'tr td:nth-child(' + pos + ') ' + cols[k].type;
-                    // Maldito Internet Explorer, no es posible usar "live"
+                    // Shitty Internet Explorer, not posible to use "live"
                     if(cols[k].type == 'input[type="text"]' || cols[k].type == 'textarea' || cols[k].type == 'select' ) {
                         $(table).find(exp).unbind("change");
                         $(table).find(exp).change( function(e) {
@@ -372,22 +369,22 @@
         }
 
         /**
-         * Calcula la formula que se la hay enviado en la fila
-         * @param String col Columna
-         * @param DOM row Fila de la cual se ejecuta la formula
+         * Calculates the formula according to de columns
+         * @param String col, column name
+         * @param Integer pos, position of the row where the event was generated
          */
         function calculateFormula(col, pos) {
             var pat = cols[col].formula.match(/\b[a-z_-]+[0-9]*\b/ig);
             var formu = cols[col].formula;
             var row = $(table).find('tr:eq('+ pos + ')');
-            // Solución para IE
+            // Again needed for IE
             for(var k in pat) {
                 if(!/^\d+$/.test(k)) {
                     delete(pat[k]);
                 }
             }
             var columns = []
-            // Se prepara la formula para ser calculada
+            // Prepare formula to be calcultated
             for(var k in pat) {
                 var exp = 'td:eq(' + cols[pat[k]].pos + ') ' + cols[pat[k]].type;
                 var val = 0;
@@ -403,7 +400,7 @@
             
             var res = eval(formu);
             res = res.toFixed(config.decimals);
-            // Posicionando la respuesta correspondiente
+            // Pocision the response
             var cell = $(row).find('td:eq(' + cols[col].pos + ')');
             if(cols[col].type == "") {
                 $(cell).html(res);
@@ -411,7 +408,6 @@
                 $(cell).find(type).html(res);
             }
             for(var i=0, l=columns.length ; i< l; i++) {
-                //console.log(cols[columns[i]]);
                 if(cols[columns[i]].summary)
                     calculateSummary(columns[i]);
             }
@@ -419,10 +415,10 @@
         }
 
         /**
-         * Encuentra un valor o valores
-         * @param string bus Parametro de busqueda
-         * @param string prop Proiedad de la columna a buscar
-         * @return object Retorna la parte delobjeto de la columna
+         * Fins a value in the cols Object
+         * @param string bus, search parameter
+         * @param string prop, Property in the cols Object
+         * @return object, Returns the column
          */
         function findColBy(bus, prop) {
             for(var k in cols) {
@@ -433,13 +429,13 @@
         }
 
         /**
-         * Función que adiciona una nueva fila basada en el primera fila que permite edición
+         * Function that allows o add new rows
          */
         function addRow() {
             var tr = $(table).find('tr:not(.noedit):first').clone();
             if(!config.addedRow) {
                 var control = $(table).find('tr:not(.noedit):last').find('input, select, textarea')[0] || false;
-                // Determinar el número de fila del los controles
+                // Row number in the control
                 if(control.name) {
                     config["formPos"] = control.name.replace(/^.*\[([0-9]+)\].*$/ig, "$1") || '';
                 }
@@ -473,7 +469,7 @@
                 $(tr).find('td:eq('+ config['countRowCol'] +')').html(fila);
             }
             $(table).find('tr:not(.noedit):last').after(tr);
-            // Regitrar elementos que causan que se ejecute el calculo (Adición de eventos)
+            // Register elements that fire events
             setEvents();
             for(var kk in cols){
                 if(cols[kk].summary)
@@ -482,7 +478,7 @@
         }
         
         /**
-         * Permite borrar una fila
+         * Allows to delete a row
          */
         function delRow(elem) {
             if($(table).find('tr:not(.noedit)').length > 1 ) {
@@ -498,7 +494,7 @@
         }
 
         /**
-         * Numera las filas cuando se borran
+         * Number the rows
          */
         function rowNumber() {
             var pos = parseInt(config.countRowCol) + 1;
@@ -533,7 +529,7 @@
 
 })(jQuery);
 
-// Defauls English
+// Defauls English configurations
 Grider = {
     defaults : {
         initCalc: true,
@@ -551,7 +547,7 @@ Grider = {
     }
 }
 
-//Defauls Spanish 
+//Defauls Spanish
 /*
 Grider = {
     defaults : {
