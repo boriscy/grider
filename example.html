@@ -133,6 +133,23 @@ td{padding: 2px;}
     </div>
 <script>
 $(document).ready(function(){
+  Grider = {
+    defaults : {
+        initCalc: true,
+        addRow: true,
+        addRowWithTab: true,
+        delRow: true,
+        decimals: 1,
+        addRowText: '<caption><a href="#">Puta Fila</a></caption>',
+        delRowText: '<td><a href="#" class="delete">a la mierda</a></td>',
+        countRow: false,
+        countRowCol: 0,
+        countRowText: 'Num',
+        countRowAdd: false,
+        addedRow: false
+    }
+  }
+
     //$('#submit1').hide();
     $('#boton1').click(function(){
         $('#table1').grider({countRow: true, countRowAdd: true});

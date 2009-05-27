@@ -467,8 +467,8 @@
             if(cols[k].type == "" && cols[k].formula)
                 $(tr).find("td:eq(" + cols[k].pos + ")").html('');
             if(config['countRow']) {
-                var fila = parseInt($(table).find('tr:not(.noedit):last td:eq('+ config['countRowRow'] +')').html()) + 1;
-                $(tr).find('td:eq('+ config['countRowRow'] +')').html(fila);
+                var fila = parseInt($(table).find('tr:not(.noedit):last td:eq('+ config['countRowCol'] +')').html()) + 1;
+                $(tr).find('td:eq('+ config['countRowCol'] +')').html(fila);
             }
             $(table).find('tr:not(.noedit):last').after(tr);
             // Regitrar elementos que causan que se ejecute el calculo (Adición de eventos)
@@ -499,7 +499,7 @@
          * Numera las filas cuando se borran
          */
         function rowNumber() {
-            $(table).find('tr:not(.noedit) td:eq('+config['countRowRow']+')').each(function(index, elem) {
+            $(table).find('tr:not(.noedit) td:eq('+config['countRowCol']+')').each(function(index, elem) {
                 var ind = index + 1;
                 $(elem).html(ind);
             });
@@ -540,7 +540,7 @@ Grider = {
       addRowText: '<caption><a href="#">Add Row</a></caption>',
       delRowText: '<td><a href="#" class="delete">delete</a></td>',
       countRow: false,
-      countRowRow: 0,
+      countRowCol: 0,
       countRowAdd: false,
       addedRow: false
   }
@@ -558,7 +558,7 @@ Grider = {
       addRowText: '<caption><a href="#">Adicionar Fila</a></caption>',
       delRowText: '<td><a href="#" class="delete">borrar</a></td>',
       countRow: false,
-      countRowRow: 0,
+      countRowCol: 0,
       countRowAdd: false,
       addedRow: false
   }

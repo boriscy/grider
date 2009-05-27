@@ -122,7 +122,25 @@ td{padding: 2px;}
 <div id="testDiv"></div>
 </body>
 </html>
-<script>
+<script type="text/javascript">
+
+Grider = {
+    defaults : {
+        initCalc: true,
+        addRow: true,
+        addRowWithTab: true,
+        delRow: true,
+        decimals: 2,
+        addRowText: '<caption><a href="#">Add Row</a></caption>',
+        delRowText: '<td><a href="#" class="delete">delete</a></td>',
+        countRow: false,
+        countRowText: 'Nº',
+        countRowCol: 0,
+        countRowAdd: false,
+        addedRow: false
+    }
+}
+
 // Tests
 $(document).ready(function() {
   var elem;
