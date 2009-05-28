@@ -168,7 +168,7 @@
             for(var k in cols) {
                 var cell = $(row).find('td:eq(' + cols[k].pos + ')')[0];
                 
-                var node = $(cell).find('select')[0] || $(cell).find('input:not([type="submit"])')[0] || $(cell).find('select')[0];
+                var node = $(cell).find('select')[0] || $(cell).find('input:not(:submit)')[0] || $(cell).find('select')[0];
                 try {
                      type = node.nodeName.toLowerCase();
                 }catch(e){ type = false }
@@ -177,7 +177,7 @@
                     
                     switch(type) {
                         case 'input':
-                            cols[k]['type'] = 'input[type="'+ node.type +'"]';
+                            cols[k]['type'] = 'input:'+ node.type;
                             break;
                         case 'select':
                             cols[k]['type'] = 'select';
@@ -186,7 +186,7 @@
                             cols[k]['type'] = 'textarea';
                             break;
                         default:
-                            cols[k]['type'] = 'input[type="text"]';
+                            cols[k]['type'] = 'input:text';
                             break;
                     }
                 }else{
@@ -353,12 +353,12 @@
                     var pos = parseInt(cols[k]['pos']) + 1;
                     var exp = 'tr td:nth-child(' + pos + ') ' + cols[k].type;
                     // Shitty Internet Explorer, not posible to use "live"
-                    if(cols[k].type == 'input[type="text"]' || cols[k].type == 'textarea' || cols[k].type == 'select' ) {
+                    if(cols[k].type == 'input:text' || cols[k].type == 'textarea' || cols[k].type == 'select' ) {
                         $(table).find(exp).unbind("change");
                         $(table).find(exp).change( function(e) {
                             fireCellEvent(e);
                         });
-                    }else if( cols[k].type == 'input[type="checkbox"]') {
+                    }else if( cols[k].type == 'input:checkbox') {
                         $(table).find(exp).unbind("click");
                         $(table).find(exp).click( function(e) {
                             fireCellEvent(e);
@@ -388,9 +388,9 @@
             for(var k in pat) {
                 var exp = 'td:eq(' + cols[pat[k]].pos + ') ' + cols[pat[k]].type;
                 var val = 0;
-                if(cols[pat[k]].type == 'input[type="checkbox"]') {
+                if(cols[pat[k]].type == 'input:checkbox') {
                     val = $(row).find(exp).attr('checked') ? 1 : 0;
-                }else if(cols[pat[k]].type == 'input[type="text"]'){
+                }else if(cols[pat[k]].type == 'input:text'){
                     val = parseFloat( $(row).find(exp).val() ) || 0
                 }
                 var reg = new RegExp('\\b' + pat[k] + '\\b')
@@ -460,7 +460,7 @@
                     }
                     $(elem)
                 });
-                $(tr).find("input[type=radio], input[type=checkbox]").attr('checked', false);
+                $(tr).find("input:radio, input:checkbox").attr('checked', false);
             }
             if(cols[k].type == "" && cols[k].formula)
                 $(tr).find("td:eq(" + cols[k].pos + ")").html('');
