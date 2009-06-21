@@ -44,8 +44,8 @@
   * @attr formula: Calculates the formula with the columns you defined, right now it does simple calculations, 
   * the formula is evaluated eval(formula), to calculate
   *
-  * Configuraciones de la variable config
-  * @param boolean config['initCalc'] Define si se realizara los calculos de (formula) al iniciar
+  * Configurations for the config variable
+  * @param boolean config['initCalc'] Defines if formula should make calculations when it initializes, in case that you already did calculations server side
   *
   * @param boolean config['addRow'] Defines if the add row link will appear
   * @param string config['addRowText'] Text that will display to add rows
@@ -56,7 +56,7 @@
   * @param boolean config['countRowAdd'] Indicates if it will be able to add Rows
   */
     $.Grider = function(table, config) {
-        
+
         /**
          * Defaults
          */
@@ -84,7 +84,7 @@
         */
         function setGrider(t) {
             $(table).find('tr:first').addClass('noedit');
-            // Permite contar las filas
+            // Allow to count rows
             if(config['countRow']) {
                 if(config['countRowAdd']) {
                     $(table).find('tr.noedit:first').prepend('<th>'+ config.countRowText +'</th>');
@@ -143,7 +143,7 @@
 
             // Add events to the elements in the table, elements that are related to a summary or formula
             setEvents();
-            // In case that it adds a new row
+            // Allows to add rows using tab when cursor on a delete link
             if(config.addRowWithTab) 
                 addRowWithTab();
         }
@@ -164,17 +164,17 @@
         */
         function setColType() {
             var row = $(table).find('tr:not(.noedit):first')[0]; // Finds the first row tha is editable
-            
+
             for(var k in cols) {
                 var cell = $(row).find('td:eq(' + cols[k].pos + ')')[0];
-                
+
                 var node = $(cell).find('select')[0] || $(cell).find('input:not(:submit)')[0] || $(cell).find('select')[0];
                 try {
                      type = node.nodeName.toLowerCase();
                 }catch(e){ type = false }
-                
+
                 if(type) {
-                    
+
                     switch(type) {
                         case 'input':
                             cols[k]['type'] = 'input:'+ node.type;
@@ -216,13 +216,15 @@
          */
         function setSummary(cell) {
             var summary = $(cell).attr('summary');
+            var summaryCell = false;
             var col = $(cell).attr('col');
             if(summary == 'sum' || summary == 'avg' || summary == 'max' || summary == 'min' || summary == 'count') {
                 cols[col]['summary'] = summary;
+                summaryCell = true;
             }
 
             // Add the summary row
-            if(!summaryRow) {
+            if(!summaryRow && summaryCell) {
                 var l = table.rows[0].cells.length;
                 var html = '<tr class="summary noedit">';
                 for(var i=0; i<l; i++) {
@@ -301,7 +303,7 @@
             if(target.nodeType == 1) {
                 var rowNum = $(target).parents('tr')[0].rowIndex;
                 var colNum = $(target).parents('td')[0].cellIndex;
-                
+
                 var col = findColBy(colNum, 'pos');
                 for(var k in cols) {
                     if(cols[k].formula) {
@@ -323,13 +325,13 @@
          * @param DOM cell
          */
         function setFormula(cell) {
-      
+
             formulaSet = true;
             var formula = $(cell).attr('formula');
             var col = $(cell).attr('col');
             if(formula) {
                 cols[col]['formula'] = formula;
-        
+
                 // Register elements that trigger the calculation of a formula
                 for(var k in cols) {
                     reg = "\\b" + k + "\\b";
@@ -397,7 +399,7 @@
                 formu = formu.replace(reg, val);
                 columns.push(pat[k]);
             }
-            
+
             var res = eval(formu);
             res = res.toFixed(config.decimals);
             // Pocision the response
@@ -415,7 +417,7 @@
         }
 
         /**
-         * Fins a value in the cols Object
+         * Finds a value in the cols Object
          * @param string bus, search parameter
          * @param string prop, Property in the cols Object
          * @return object, Returns the column
@@ -476,7 +478,7 @@
                     calculateSummary(cols[kk].name);
             }
         }
-        
+
         /**
          * Allows to delete a row
          */
@@ -503,7 +505,7 @@
                 $(elem).html(ind);
             });
         }
-        
+
         return {
             cols: cols,
             config: config,
