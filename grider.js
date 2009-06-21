@@ -462,7 +462,7 @@
                 });
                 $(tr).find("input:radio, input:checkbox").attr('checked', false);
             }
-            if(cols[k].type == "" && cols[k].formula)
+            if(cols[k] && cols[k].type == "" && cols[k].formula)
                 $(tr).find("td:eq(" + cols[k].pos + ")").html('');
             if(config['countRow']) {
                 var fila = parseInt($(table).find('tr:not(.noedit):last td:eq('+ config['countRowCol'] +')').html()) + 1;
