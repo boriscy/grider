@@ -26,6 +26,7 @@ td{padding: 2px;}
                 <th col="price" summary="max" class="testClass">Price</th>
                 <th col="quantity" summary="avg" class="testClass">Quantity</th>
                 <th col="discount" class="testClass">Discount</th>
+                <th class="testClass" style="display:none"></th>
                 <th col="subtotal" formula="price*quantity*(1 - 0.10 * discount)" summary="sum" class="testClass">Subtotal</th>
             </tr>
             <tr>
@@ -53,6 +54,7 @@ td{padding: 2px;}
                 <td>
                     <input name="det[0][discount]" type="checkbox" />
                 </td>
+                <td style="display:none"></td>
                 <td class="num">
                 </td>
             </tr>
@@ -81,6 +83,7 @@ td{padding: 2px;}
                 <td>
                     <input name="det[1][discount]" type="checkbox" />
                 </td>
+                <td style="display:none"></td>
                 <td class="num">
                 </td>
             </tr>
@@ -109,6 +112,7 @@ td{padding: 2px;}
                 <td>
                     <input name="det[2][discount]" type="checkbox" />
                 </td>
+                <td style="display:none"></td>
                 <td class="num">
                 </td>
             </tr>

@@ -13,6 +13,7 @@ table{border-collapse:collapse}
 input{width: 8em;}
 td{padding: 2px;}
 .summary{text-align: right; font-weight: bold;}
+h2{ font-size:1.3em; font-weight:bold; background:#3B84BF; }
 </style>
 </head>
 <body>
@@ -25,6 +26,7 @@ td{padding: 2px;}
         <div id="main"></div>  
 
 <h3>NOTE: Tests require <a href="http://fireunit.org/">fireunit</a> to work</h3>
+<h2>Table with many attributes</h2>
  <table border="1" id="table1" >
             <tr>
                 <th col="product" class="testclass">Product</th>
@@ -117,6 +119,49 @@ td{padding: 2px;}
 
         </table>
 
+    <h2>Test table with no column names</h2>
+        <table id="noColsName" border="1">
+          <tr>
+           <th>Item</th>
+           <th>name</th>
+          </tr>
+          <tr>
+            <td><input type="text" name="item" /></td>
+            <td><input type="text" name="name"/></td>
+          </tr>
+        </table>
+
+    <h2>Test table with hidden cols</h2>
+        <table id="hiddenCols" border="1">
+          <tr>
+             <th style="display:none"></th>
+             <th col="item">Item</th>
+             <th col="price">Price</th>
+             <th style="display:none"></th>
+             <th col="quantity">Quantity</th>
+             <th col="discount">Discount</th>
+             <th col="subtotal" formula="price*quantity*(1 - 0.1 * discount)" summary="sum">Subtotal</th>
+          </tr>
+          <tr>
+              <td style="display:none"><input type="hidden" name="table3[0][id]" value="1" /></td>
+              <td><input type="text" name="table3[0][item]" value="new Item 1" /></td>
+              <td><input type="text" name="table3[0][price]" value="3.5" class="num"/></td>
+              <td style="display:none"></td>
+              <td><input type="text" name="table3[0][quantity]" value="2" class="num" /></td>
+              <td><input type="checkbox" name="table3[0][discount]" /></td>
+              <td></td>
+          </tr>
+          <tr>
+              <td style="display:none"><input type="hidden" name="table3[1][id]" value="1" /></td>
+              <td><input type="text" name="table3[1][item]" value="new Item 1" /></td>
+              <td><input type="text" name="table3[1][price]" value="5.25" class="num"/></td>
+              <td style="display:none"></td>
+              <td><input type="text" name="table3[1][quantity]" value="4" class="num" /></td>
+              <td><input type="checkbox" name="table3[1][discount]" checked="checked"/></td>
+              <td></td>
+          </tr>
+
+        </table>
 
 
 <div id="testDiv"></div>
@@ -146,7 +191,8 @@ $(document).ready(function() {
   var elem;
   //$.Grider.prototype.defaults = {decimals:3};
   $('#table1').grider({countRow: true, countRowAdd: true});
-  module("Table creation");
+
+  module("MODULE A: Table with many attributes")
   test("Table converted", function() {
     expect(7);
     var rows = $('#table1 tr').length;
@@ -173,14 +219,13 @@ $(document).ready(function() {
 
   });
 
-  module("Table and data modification");
   test("Modify numbers", function() {
     expect(3);
     $('table tr:not(.noedit):first input:eq(1)').val(3.5).change();
     //$('table tr:not(.noedit):first input:eq(1)').val(3).change();
-    equals($('table tr:not(.noedit):first td:eq(5)').html(), "31.50", "Subtotal for the changed line");
-    equals($('table tr.noedit:last td:eq(3)').html(), "2.83", "Summary avg for changed input should be 2.83");
-    equals($('table tr.noedit:last td:eq(5)').html(), "49.49", "Summary for subtotal should be 49.49");
+    equals($('#table1 tr:not(.noedit):first td:eq(5)').html(), "31.50", "Subtotal for the changed line");
+    equals($('#table1 tr.noedit:last td:eq(3)').html(), "2.83", "Summary avg for changed input should be 2.83");
+    equals($('#table1 tr.noedit:last td:eq(5)').html(), "49.49", "Summary for subtotal should be 49.49");
   });
 
   test("Add new Lines and modify", function() {
@@ -238,5 +283,38 @@ $(document).ready(function() {
     });
     ok(countRow, "Count of Rows");
   });
+
+  module("MODULE B: Test table with no columns");
+  $("#noColsName").grider({countRow: true, countRowAdd: true});
+  test("Tests for table with no col names", function() {
+    //expect(1);
+    equals($("#noColsName tr:not(.noedit):first td").length, 4, "Number of cols")
+    equals($("#noColsName tr").length, 2, "No rows aded, there is no sumary");
+    $("#noColsName caption a").click();
+    equals($("#noColsName tr").length, 3, "No rows aded, there is no sumary");
+    $("#noColsName caption a").click();
+    equals($("#noColsName tr").length, 4, "No rows aded, there is no sumary");
+    equals( $("#noColsName tr:not(.noedit):last td:firs").html(), "3", "Correct row number");
+
+    fireunit.click($("#noColsName tr:not(.noedit):eq(1) a.delete")[0]);
+    equals($("#noColsName tr").length, 3, "No rows aded, there is no sumary");
+  });
+
+  $("#hiddenCols").grider();
+  module("MODULE C: Test table with hiddencols");
+  test("check intial calculations", function() {
+    equals($("#hiddenCols tr:not(.noedit):first td").length, 8 ,"8 columns")
+    equals($("#hiddenCols tr.summary td:nth-child(7)").html(), "25.90", "Value");
+    fireunit.click($("#hiddenCols caption a")[0]);
+    $("#hiddenCols tr:not(.noedit):last input:text:eq(1)").val("3.3").change();
+    $("#hiddenCols tr:not(.noedit):last input:text:eq(2)").val("1.5").change();
+    
+    equals($("#hiddenCols tr.summary td:nth-child(7)").html(), "30.85", "Value");
+    fireunit.click($("#hiddenCols tr:not(.noedit):last input:checkbox")[0]);
+    equals($("#hiddenCols tr.summary td:nth-child(7)").html(), "30.35", "Value");
+    fireunit.click($("#hiddenCols tr:not(.noedit):eq(1) a.delete")[0]);
+    equals($("#hiddenCols tr.summary td:nth-child(7)").html(), "11.45", "Value");
+  });
+
 });
 </script>

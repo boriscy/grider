@@ -10,7 +10,7 @@
 
     $.fn.extend({
         grider: function(config) {
-            return this.each(function(){
+            return this.each(function() {
                 new $.Grider(this, config);
             });
         }
@@ -121,8 +121,9 @@
                 });
             }
             for(var k in cols){
-                if(cols[k].summary)
+                if(cols[k].summary) {
                     calculateSummary(k);
+                }
             };
 
             // Allow to add rows
@@ -149,7 +150,6 @@
             // Allows to add rows using tab when cursor on a delete link
             if(config.addRowWithTab)
                 addRowWithTab();
-            console.log(cols);
         }
 
         /**
@@ -207,11 +207,12 @@
          */
         function setColumn(cell, pos) {
             var col = $(cell).attr('col');
-            if(col)
+            if(col) {
                 cols[col] = {
                     pos: pos,
                     name: col
                 };
+            }
         }
 
         /**
@@ -231,10 +232,8 @@
             if(!summaryRow && summaryCell) {
                 var html = '<tr class="summary noedit">';
                 $(table).find("tr:not(.noedit):first td").each(function(index, elem) {
-                    var style = $(elem).attr("style") ? 'style="' + $(elem).attr("style") + '"' : "";
+                    var style = $(elem).attr("style") ? ' style="' + $(elem).attr("style") + '"' : "";
                     html += "<td" + style + "></td>";
-                    console.log("%o, %o, %o", index,  style, elem);
-                    console.log(style);
                 });
                 html+='</tr>';
                 $(table).append(html);
@@ -383,7 +382,7 @@
         function calculateFormula(col, pos) {
             var pat = cols[col].formula.match(/\b[a-z_-]+[0-9]*\b/ig);
             var formu = cols[col].formula;
-            var row = $(table).find('tr:eq('+ pos + ')');
+            var row = $(table).find('tr:nth-child('+ (pos +1) + ')');
             // Again needed for IE
             for(var k in pat) {
                 if(!/^\d+$/.test(k)) {
@@ -393,7 +392,12 @@
             var columns = []
             // Prepare formula to be calcultated
             for(var k in pat) {
-                var exp = 'td:eq(' + cols[pat[k]].pos + ') ' + cols[pat[k]].type;
+                //console.log("%s: %o, %o, %o",table.id, k, pat[k], cols[pat[k]]);
+                try{
+                var exp = 'td:nth-child(' + (cols[pat[k]].pos + 1) + ') ' + cols[pat[k]].type;
+                }catch(e){
+                console.log("%s: %o, %o, %o",table.id, k, pat[k], cols);
+                }
                 var val = 0;
                 if(cols[pat[k]].type == 'input:checkbox') {
                     val = $(row).find(exp).attr('checked') ? 1 : 0;
@@ -408,7 +412,7 @@
             var res = eval(formu);
             res = res.toFixed(config.decimals);
             // Pocision the response
-            var cell = $(row).find('td:eq(' + cols[col].pos + ')');
+            var cell = $(row).find('td:nth-child(' + (cols[col].pos + 1) + ')');
             if(cols[col].type == "") {
                 $(cell).html(res);
             }else{
