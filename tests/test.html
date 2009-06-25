@@ -27,11 +27,11 @@ td{padding: 2px;}
 <h3>NOTE: Tests require <a href="http://fireunit.org/">fireunit</a> to work</h3>
  <table border="1" id="table1" >
             <tr>
-                <th col="product">Product</th>
-                <th col="price" summary="max">Price</th>
-                <th col="quantity" summary="avg">Quantity</th>
-                <th col="discount">Discount</th>
-                <th col="subtotal" formula="price*quantity*(1 - 0.10 * discount)" summary="sum">Subtotal</th>
+                <th col="product" class="testclass">Product</th>
+                <th col="price" class="testclass" summary="max">Price</th>
+                <th col="quantity" class="testclass" summary="avg">Quantity</th>
+                <th col="discount" class="testclass">Discount</th>
+                <th col="subtotal" class="testclass" formula="price*quantity*(1 - 0.10 * discount)" summary="sum">Subtotal</th>
             </tr>
             <tr>
                 <td>
@@ -148,7 +148,7 @@ $(document).ready(function() {
   $('#table1').grider({countRow: true, countRowAdd: true});
   module("Table creation");
   test("Table converted", function() {
-    expect(6);
+    expect(7);
     var rows = $('#table1 tr').length;
     equals( rows, 5, "Expected 5 Rows" );
     equals( $('#table1 tr.noedit').length, 2, "2 Rows with .noedit class");
@@ -156,7 +156,9 @@ $(document).ready(function() {
     // Checks for added cols
     equals($('#table1 tr:first th:first').html(), "Nº", "added Number rows");
     equals( $('#table1 tr:not(.noedit):first td:first').html(), "1", "First line Should be 1");
-    equals($('#table1 tr:not(.noedit):last td:first').html(), "3", "Las Line Should be 3");
+    equals($('#table1 tr:not(.noedit):last td:first').html(), "3", "Last Line Should be 3");
+    // Checks if the class was added, copied
+    equals($("#table1 tr.noedit th:first").attr("class"), "testclass", "Test class");
   });
 
   test("Operations should be correct", function() {
