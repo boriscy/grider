@@ -382,7 +382,7 @@
         function calculateFormula(col, pos) {
             var pat = cols[col].formula.match(/\b[a-z_-]+[0-9]*\b/ig);
             var formu = cols[col].formula;
-            var row = $(table).find('tr:nth-child('+ (pos +1) + ')');
+            var row = $(table).find('tr:eq('+ pos + ')');
             // Again needed for IE
             for(var k in pat) {
                 if(!/^\d+$/.test(k)) {
@@ -394,9 +394,9 @@
             for(var k in pat) {
                 //console.log("%s: %o, %o, %o",table.id, k, pat[k], cols[pat[k]]);
                 try{
-                var exp = 'td:nth-child(' + (cols[pat[k]].pos + 1) + ') ' + cols[pat[k]].type;
+                    var exp = 'td:nth-child(' + (cols[pat[k]].pos + 1) + ') ' + cols[pat[k]].type;
                 }catch(e){
-                console.log("%s: %o, %o, %o",table.id, k, pat[k], cols);
+                    //console.log("%s: %o, %o, %o",table.id, k, pat[k], cols);
                 }
                 var val = 0;
                 if(cols[pat[k]].type == 'input:checkbox') {
