@@ -163,6 +163,99 @@ h2{ font-size:1.3em; font-weight:bold; background:#3B84BF; }
 
         </table>
 
+<h2>Table with rails support many attributes</h2>
+ <table border="1" id="tableRails" >
+            <tr>
+                <th col="product" class="testclass">Product</th>
+                <th col="price" class="testclass" summary="max">Price</th>
+                <th col="quantity" class="testclass" summary="avg">Quantity</th>
+                <th col="discount" class="testclass">Discount</th>
+                <th col="subtotal" class="testclass" formula="price*quantity*(1 - 0.10 * discount)" summary="sum">Subtotal</th>
+            </tr>
+            <tr>
+                <input type="hidden" name="master[details_attributes][0][id]"/>
+                <td>
+                    <select name="master[details_attributes][0][product]" >
+                        <option value="1">Computer</option>
+                        <option value="2">Iphone</option>
+                        <option value="3" selected="selected">Mouse</option>
+                        <option value="4">Keyboard</option>
+                        <option value="5">Pantalla</option>
+                        <option value="6">USB Memmory</option>
+                        <option value="7">CD Burnner</option>
+                        <option value="8">Hard Disk</option>
+                        <option value="9">Motherboard</option>
+                        <option value="10">Case</option>
+                    </select>
+                </td>
+                <td>
+                    <input name="master[details_attributes][0][price]" type="text" class="num" value="10" />
+                </td>
+                <td>
+                    <input name="master[details_attributes][0][quantity]" type="text" class="num" value="1" />
+                </td>
+                <td>
+                    <input name="master[details_attributes][0][discount]" type="checkbox" checked="checked" />
+                </td>
+                <td class="num">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="master[details_attributes][1][product]" >
+                        <option value="1">Computer</option>
+                        <option value="2">Iphone</option>
+                        <option value="3">Mouse</option>
+                        <option value="4">Keyboard</option>
+                        <option value="5">Pantalla</option>
+                        <option value="6">USB Memmory</option>
+                        <option value="7">CD Burnner</option>
+                        <option value="8">Hard Disk</option>
+                        <option value="9">Motherboard</option>
+                        <option value="10">Case</option>
+                    </select>
+                </td>
+                <td>
+                    <input name="master[details_attributes][1][price]" type="text" class="num" value="2.33" />
+                </td>
+                <td>
+                    <input name="master[details_attributes][1][quantity]" type="text" class="num" value="3" />
+                </td>
+                <td>
+                    <input name="master[details_attributes][1][discount]" type="checkbox" />
+                </td>
+                <td class="num">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="master[details_attributes][2][product]" >
+                        <option value="1">Computer</option>
+                        <option value="2">Iphone</option>
+                        <option value="3">Mouse</option>
+                        <option value="4">Keyboard</option>
+                        <option value="5">Pantalla</option>
+                        <option value="6">USB Memmory</option>
+                        <option value="7">CD Burnner</option>
+                        <option value="8">Hard Disk</option>
+                        <option value="9">Motherboard</option>
+                        <option value="10">Case</option>
+                    </select>
+                </td>
+                <td>
+                    <input name="master[details_attributes][2][price]" type="text" class="num" value="5.5" />
+                </td>
+                <td>
+                    <input name="master[details_attributes][2][quantity]" type="text" class="num" value="2" />
+                </td>
+                <td>
+                    <input name="master[details_attributes][2][discount]" type="checkbox" />
+                </td>
+                <td class="num">
+                </td>
+            </tr>
+
+        </table>
 
 <div id="testDiv"></div>
 </body>
@@ -314,6 +407,100 @@ $(document).ready(function() {
     equals($("#hiddenCols tr.summary td:nth-child(7)").html(), "30.35", "Value");
     fireunit.click($("#hiddenCols tr:not(.noedit):eq(1) a.delete")[0]);
     equals($("#hiddenCols tr.summary td:nth-child(7)").html(), "11.45", "Value");
+  });
+  
+  $('#tableRails').grider({countRow: true, countRowAdd: true});
+
+  module("MODULE D: Table with many attributes")
+  test("Table converted", function() {
+    expect(7);
+    var rows = $('#table1 tr').length;
+    equals( rows, 5, "Expected 5 Rows" );
+    equals( $('#table1 tr.noedit').length, 2, "2 Rows with .noedit class");
+    equals($('#table1 tr:not(.noedit):first td').length, 7, "7 Columns");
+    // Checks for added cols
+    equals($('#table1 tr:first th:first').html(), "Nº", "added Number rows");
+    equals( $('#table1 tr:not(.noedit):first td:first').html(), "1", "First line Should be 1");
+    equals($('#table1 tr:not(.noedit):last td:first').html(), "3", "Last Line Should be 3");
+    // Checks if the class was added, copied
+    equals($("#table1 tr.noedit th:first").attr("class"), "testclass", "Test class");
+  });
+
+  test("Operations should be correct", function() {
+    expect(5);
+    // Formulas
+    equals( $('#table1 tr:not(.noedit):first td:eq(5)').html(), "9.00", "Subtotal with discount should be 9.00");
+    equals( $('#table1 tr:not(.noedit):eq(1) td:eq(5)').html(), "6.99", "Subtotal with discount should be 6.99");
+    // Summary
+    equals( $('#table1 tr.noedit:last td:eq(2)').html(), "10.00", "Summary for max in product should be 10.00");
+    equals( $('#table1 tr.noedit:last td:eq(3)').html(), "2.00", "Summary for avg in price should be 2.00");
+    equals( $('#table1 tr.noedit:last td:eq(5)').html(), "26.99", "Summary for subtotal should be 26.99");
+
+  });
+
+  test("Modify numbers", function() {
+    expect(3);
+    $('table tr:not(.noedit):first input:eq(1)').val(3.5).change();
+    //$('table tr:not(.noedit):first input:eq(1)').val(3).change();
+    equals($('#table1 tr:not(.noedit):first td:eq(5)').html(), "31.50", "Subtotal for the changed line");
+    equals($('#table1 tr.noedit:last td:eq(3)').html(), "2.83", "Summary avg for changed input should be 2.83");
+    equals($('#table1 tr.noedit:last td:eq(5)').html(), "49.49", "Summary for subtotal should be 49.49");
+  });
+
+  test("Add new Lines and modify", function() {
+    expect(6);
+    $("#table1 caption a").click();
+    $("#table1 caption a").click();
+    equals($('#table1 tr:not(.noedit)').length, 5, "There should be two added Rows, total: 5 Rows");
+    equals($('#table1 tr:not(.noedit):eq(3) select:first').attr('name'), "det[3][product]", "Name of the added line should be 'det[3][product]'");
+    equals($('#table1 tr:not(.noedit):eq(4) select:first').attr('name'), "det[4][product]", "Name of the added line should be 'det[4][product]'");
+    // Check the average
+    equals($('#table1 tr.noedit:last td:eq(3)').html(), "1.70", "Summary avg should be 1.70");
+    // Check the line numbers
+    equals($('#table1 tr:not(.noedit):eq(3) td:eq(0)').html(), "4", "Line Numbers");
+    equals($('#table1 tr:not(.noedit):eq(4) td:eq(0)').html(), "5", "Line Numbers");
+  });
+
+  test("Modify values from the added lines", function() {
+    
+    expect(4);
+    $('#table1 tr:not(.noedit):eq(3) input:eq(0)').val(2.33).change();
+    $('#table1 tr:not(.noedit):eq(3) input:eq(1)').val(4).change();
+    //$('#table1 tr:not(.noedit):eq(3) input[type="checkbox"]').click().attr('checked', true);
+    elem = $('#table1 tr:not(.noedit):eq(3) input[type="checkbox"]')[0];//change().attr('checked', true);
+    fireunit.click(elem);// Required to fire the event correctly
+    
+    // Second added Row
+    $('#table1 tr:not(.noedit):eq(4) input:eq(0)').val(12.22).change();
+    $('#table1 tr:not(.noedit):eq(4) input:eq(1)').val(3.35).change();
+
+    //ok($('table input[type="checkbox"]:eq(3)').attr('checked'), "checkbox should be checked");
+    equals($('#table1 tr:not(.noedit):eq(3) td:eq(5)').html(), "8.39", "Subtotal should be 8.39");
+    equals($('#table1 tr.noedit:eq(1) td:eq(5)').html(), "98.82", "Summary of subtotal");
+    equals($('#table1 tr.noedit:eq(1) td:eq(2)').html(), "12.22", "Summary quantity");
+    equals($('#table1 tr.noedit:eq(1) td:eq(3)').html(), "3.17", "Summary price");
+
+    //$('#table1 tr:not(.noedit):eq(3) input[type="checkbox"]').click();
+
+  });
+
+  test("Delete lines and test for calculations", function() {
+    
+    //expect(4);
+    fireunit.click( $('#table1 tr:not(.noedit):eq(1) a.delete')[0] );
+    equals( $('#table1 tr:not(.noedit)').length, 4, "Number of rows, after delete");
+    equals( $('#table1 tr.noedit:last td:eq(5)').html(), "91.83", "Calculate subtotal sumary");
+    equals( $('#table1 tr.noedit:last td:eq(3)').html(), "3.21", "Calculate avg sumary");
+    var countRow = true;
+    // Determine if the row numbers are right
+    $('#table1 tr:not(.noedit)').each(function(index, el) {
+      var pos = index +1;
+      if(pos != el.cells[0].innerHTML ) {
+        countRow = false;
+        return false;
+      }
+    });
+    ok(countRow, "Count of Rows");
   });
 
 });
