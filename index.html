@@ -7,14 +7,56 @@
 <script type="text/javascript" src="grider.js" ></script>
 <title>Grider - Grider is a jQuery plugin to simplify the Master details forms</title>
 <style>
+body{text-align:center; background: #DFDFDF}
 table{border-collapse:collapse}
 .num{text-align:right}
 input{width: 8em;}
 td{padding: 2px;}
 .summary{text-align: right; font-weight: bold;}
+a{text-decoration:underline; color:#375B7F;}
+a:hover{ text-decoration: none;}
+.hiligh{ font-weight:bold; color:#791BDF;}
+#wrap{ width: 700px; text-align:left; margin: auto; background: #FFF; padding: 10px 20px;}
 </style>
 </head>
 <body>
+<div id="wrap">
+  <div>
+  <h1>Grider</h1>
+  Grider is a plugin for jQuery that makes your life easier when you need to edit or create
+  a table that handles a list of items. It helps you to do calculations in a very simple way, it supports the following features
+  <ul>
+    <li>Can make simple operations defined in the headers</li>
+    <li>Can add a row count to the table</li>
+    <li>Adds or deletes rows based on a row</li>
+    <li>Has summaries for average (avg), sum (sum), maximum (max) and minimum (min)</li>
+    <li>Works nice with Ruby on rails <a href="http://weblog.rubyonrails.org/2009/1/26/nested-model-forms">nested forms</a></li>
+  </ul>
+  It has been tested with Firefox 3 and Internet Explorer 6 and Google chrome 1, you can configure many fields<br/>
+  <pre>
+  Grider = {
+    defaults : {
+        initCalc: true, // Tells if it should do the calculations when init
+        addRow: true, // Allow adding rows
+        addRowWithTab: true, // Allow addign rows with tab when you are focused on the delete Row
+        delRow: true, // Allows to delete a row
+        decimals: 2, // Decimals used to calculate formulas and summaries
+        addRowText: '<caption><a href="#">Add Row</a></caption>', // Text to add rows
+        delRowText: '<td><a href="#" class="delete">delete</a></td>', // Text for deleting rows
+        countRow: false, // Tells to count rows
+        countRowCol: 0, // Tells to add the column for counting rows
+        countRowText: '#', // The text in the header for the count column
+        countRowAdd: false,
+        addedRow: false
+    }
+  }
+  </pre>
+  <div>
+  Try the example below and download this plugin <a href="http://github.com/boriscy/grider/tarball/V0.7.0" class="hiligh">grider.tgz</a> or 
+  <a href="http://github.com/boriscy/grider/zipball/V0.7.0" class="hiligh">grider.zip</a>
+  </div>
+
+  </div>
     <div>
         <h2>Example 1</h2>
         <form method="post" action="post.php" >
@@ -122,7 +164,7 @@ td{padding: 2px;}
         <input type="submit" value="Submit" id="submit1" disabled="true"/>
         </form>
         <br/>
-        <a id="button1" href="#">Convert Table 1</a>
+        <a id="button1" href="#table1">Convert Table 1</a>
         <h4>Code to convert table1</h4>
         <div>
         # HTML in the first row where the "th" is located
@@ -138,6 +180,7 @@ td{padding: 2px;}
 #       $('#table1').grider({countRow: true, countRowAdd: true});<br/>
         </div>
     </div>
+  </div>
 <script>
 $(document).ready(function(){
   Grider = {
@@ -166,5 +209,6 @@ $(document).ready(function(){
 });
 
 </script>
+
 </body>
 </html>
