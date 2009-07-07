@@ -1,3 +1,14 @@
 Grider is a plugin for jQuery that makes your life easier when you need to edit or create
 a table that handles a list of items. It helps you to do calculations in a very simple
-way you can check the official page and examples http://boriscy.github.com/grider/
+way, it has the following features:
+<ul>
+    <li>Can make simple operations defined in the headers</li>
+    <li>Can add a row count to the table</li>
+    <li>Adds or deletes rows based on a row</li>
+    <li>Has summaries for average (avg), sum (sum), maximum (max) and minimum (min)</li>
+    <li>Works nice with Ruby on rails <a href="http://weblog.rubyonrails.org/2009/1/26/nested-model-forms">nested forms</a></li>
+  </ul>
+
+
+Check the official page and examples http://boriscy.github.com/grider/
+
