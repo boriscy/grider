@@ -16,7 +16,32 @@ td{padding: 2px;}
 a{text-decoration:underline; color:#375B7F;}
 a:hover{ text-decoration: none;}
 .hiligh{ font-weight:bold; color:#791BDF;}
-#wrap{ width: 700px; text-align:left; margin: auto; background: #FFF; padding: 10px 20px;}
+#wrap{ width: 900px; text-align:left; margin: auto; background: #FFF; padding: 10px 20px;}
+
+a.special{
+  display: inline-block;
+  background-color: #618ebb;
+  color: white;
+  text-decoration: none;
+  padding: 4px;
+}
+
+a.special:hover{
+  background-color: #375B7F;
+}
+
+.b{
+  font-weight: bold;
+}
+
+big{
+  font-size: 1.2em;
+}
+
+table caption{
+  padding:4px;
+}
+
 </style>
 </head>
 <body>
@@ -161,10 +186,9 @@ a:hover{ text-decoration: none;}
 
         </table>
         
-        <input type="submit" value="Submit" id="submit1" disabled="true"/>
         </form>
         <br/>
-        <a id="button1" href="#table1">Convert Table 1</a>
+        <a id="button1" class='special b big' href="#table1">Convert Table</a>
         <h4>Code to convert table1</h4>
         <div>
         # HTML in the first row where the "th" is located
@@ -190,8 +214,8 @@ $(document).ready(function(){
         addRowWithTab: true,
         delRow: true,
         decimals: 2,
-        addRowText: '<caption><a href="#">Add Row</a></caption>',
-        delRowText: '<td><a href="#" class="delete">delete</a></td>',
+        addRowText: '<caption><a href="javascript:" class="special">Add Row</a></caption>',
+        delRowText: '<td><a href="javascript:" class="delete">delete</a></td>',
         countRow: false,
         countRowCol: 0,
         countRowText: '#',
