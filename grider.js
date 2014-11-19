@@ -41,7 +41,7 @@
   * @attr summary: Defines the type of calculation it will be done on the column,
   * operations that can be done are "sum", "avg", "max", "min" and "count"
   *
-  * @attr formula: Calculates the formula with the columns you defined, right now it does simple calculations, 
+  * @attr formula: Calculates the formula with the columns you defined, right now it does simple calculations,
   * the formula is evaluated eval(formula), to calculate
   *
   * Configurations for the config variable
@@ -101,7 +101,7 @@
                     });
                 }
             }
- 
+
             var l = $(table).find("tr:not(.noedit):first td").length;
             for(var i = 0; i < l; i++) {
                 setColumn(t.rows[0].cells[i], i);
@@ -144,7 +144,7 @@
                 $(table).find('tr:not(.noedit)').each(function(index,elem){
                     $(elem).append(config['delRowText']);
                 });
-                $(table).find('a.delete').live("click", function(){
+                $(table).find('a.delete').on("click", function() {
                     delRow(this);
                     return true;
                 });
@@ -161,7 +161,7 @@
          * Allows to add a new row, the new row is added at the endof the editable rows
          */
         function addRowWithTab() {
-            $(table).find("tr:not(.noedit):last a.delete").live("keydown",function(e) {
+            $(table).find("tr:not(.noedit):last a.delete").on("keydown", function(e) {
                 if(e.keyCode == 9) {
                     addRow();
                 }
